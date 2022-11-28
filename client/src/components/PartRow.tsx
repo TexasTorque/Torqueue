@@ -1,17 +1,18 @@
-import React from "react";
 import "../App.css";
 
-type CardProps = {
-    title: string;
+type Props = {
+    part: any;
 };
 
-export default function TableRow({ title }: CardProps): JSX.Element {
+export default function TableRow({ part }: Props): JSX.Element {
     return (
         <tr>
-            <td>{title}</td>
-            <td>Status</td>
-            <td>Machine</td>
-            <td>Edit</td>
+            <td>{part.title}</td>
+            <td>{part.status}</td>
+            <td>{part.machine}</td>
+            <td>
+                <button>Edit</button>
+            </td>
         </tr>
     );
 }
