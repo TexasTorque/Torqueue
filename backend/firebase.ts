@@ -18,7 +18,7 @@ const partsRef = ref(storage, 'parts_files')
 console.log("bruh!")
 uploadBytes(partsRef, new Uint8Array([123])).then((snapshot) => {
     console.log("Uploaded!")
-}).catch(e => console.log(e))
+})
 
 
 

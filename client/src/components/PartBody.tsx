@@ -9,8 +9,9 @@ interface TestPart {
 }
 
 export default function TableBody() {
-    let [parts, setParts] = useState<TestPart>({title: "", status: "", machine: ""});
-
+    let [parts, setParts] = useState<TestPart[]>([
+        { title: "", status: "", machine: "" },
+    ]);
 
     useEffect(() => {
         const callGetAllBooks = async () => {
@@ -23,10 +24,6 @@ export default function TableBody() {
         //const request = await fetch(
         //    `${process.env.REACT_APP_BACKEND_URL}/api/getAllParts`
         //);
-
-        
-
-        let array = [];
 
         const testPartArray: TestPart[] = [
             {
@@ -51,7 +48,7 @@ export default function TableBody() {
 
     return (
         <>
-            {parts.map((part: string, id: number) => {
+            {parts.map((part: TestPart, id: number) => {
                 return <TableRow key={id} part={part} />;
             })}
         </>
