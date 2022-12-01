@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.Popup {
+    display: inline-block !important;
+    width: 4em;
+    margin: 0.3em;
+}
+
+.btn-group button {
+    color: white;
+}
+
+.btn-group:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.btn-close {
+    opacity: 1 !important;
+    font-size: 21px;
+    border-radius: 15px;
+}
+
+.BlackTextBox {
+    background-color: rgb(24, 26, 27) !important;
+    color: rgb(209, 205, 199) !important;
+    border-color: rgb(60, 65, 68);
+}
+
+body {
+    background-color: rgb(24, 26, 27) !important;
+}

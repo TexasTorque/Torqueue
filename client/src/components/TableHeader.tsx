@@ -1,14 +1,12 @@
-import React from "react";
-import "../App.css";
-
 export default function TableHeader() {
     return (
         <thead>
             <tr>
+                <th>Priority</th>
                 <th>Part</th>
                 <th>Status</th>
-                <th>Machine</th>
-                <th>Edit</th>
+                <th>Error</th>
+                <th>Manage</th>
             </tr>
         </thead>
     );
