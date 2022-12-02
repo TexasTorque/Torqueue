@@ -1,6 +1,6 @@
 import TableHeader from "../components/TableHeader";
 import Table from "react-bootstrap/Table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
 import "../index.css";
@@ -10,7 +10,13 @@ interface Part {
     status: number;
     machine: string;
     needed: string;
-    priority: number;
+    priority: string;
+    files: Files[];
+}
+
+interface Files {
+    name: string;
+    filetype: string;
 }
 
 export default function Dashboard() {
@@ -19,15 +25,29 @@ export default function Dashboard() {
         status: 0,
         machine: "",
         needed: "0",
-        priority: 0,
+        priority: "",
+        files: [],
     });
+
     const [hotPart, setHotPart] = useState<Part>({
         name: "",
         status: 0,
         machine: "",
         needed: "0",
-        priority: 0,
+        priority: "",
+        files: [],
     });
+
+    useEffect(() => {
+        fetch(process.env.REACT_APP_BACKEND_URL + "/editPart", {
+            method: "post",
+            headers: new Headers({
+                "Content-type":
+                    "application/x-www-form-urlencoded; charset=UTF-8",
+            }),
+            body: hotPart as any,
+        });
+    }, [hotPart]);
 
     return (
         <>

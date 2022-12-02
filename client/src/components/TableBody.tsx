@@ -6,7 +6,13 @@ interface Part {
     status: number;
     machine: string;
     needed: string;
-    priority: number;
+    priority: string;
+    files: Files[];
+}
+
+interface Files {
+    name: string;
+    filetype: string;
 }
 
 type Props = {
@@ -15,9 +21,16 @@ type Props = {
     setPopupPart: (hotPart: Part) => void;
 };
 
-export default function TableBody({ setPopupPart }: Props) {
+export default function TableBody({ setPopupPart, setHotPart }: Props) {
     let [parts, setParts] = useState<Part[]>([
-        { name: "", status: 0, machine: "", needed: "0", priority: 0 },
+        {
+            name: "",
+            status: 0,
+            machine: "",
+            needed: "0",
+            priority: "",
+            files: [],
+        },
     ]);
 
     useEffect(() => {
@@ -34,21 +47,24 @@ export default function TableBody({ setPopupPart }: Props) {
                 status: 1,
                 machine: "Tormach",
                 needed: "1",
-                priority: 1,
+                priority: "1",
+                files: [],
             },
             {
                 name: "Spacer",
                 status: 0,
                 machine: "Lathe",
                 needed: "1",
-                priority: 2,
+                priority: "2",
+                files: [],
             },
             {
                 name: "Block",
                 status: 3,
                 machine: "Nebula",
                 needed: "1",
-                priority: 3,
+                priority: "3",
+                files: [],
             },
         ];
 
@@ -59,7 +75,7 @@ export default function TableBody({ setPopupPart }: Props) {
         <>
             {parts.map((part: Part, id: number) => {
                 return (
-                    <PartRow key={id} part={part} setPopupPart={setPopupPart} />
+                    <PartRow key={id} part={part} setPopupPart={setPopupPart} setHotPart={setHotPart}/>
                 );
             })}
         </>

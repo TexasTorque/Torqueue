@@ -6,6 +6,7 @@ export default function TableHeader() {
                 <th>Part</th>
                 <th>Status</th>
                 <th>Error</th>
+                <th className="w-5">Complete</th>
                 <th>Manage</th>
             </tr>
         </thead>
