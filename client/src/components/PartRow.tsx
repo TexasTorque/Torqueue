@@ -1,18 +1,5 @@
 import { Button } from "react-bootstrap";
-
-interface Part {
-    name: string;
-    status: number;
-    machine: string;
-    needed: string;
-    priority: string;
-    files: Files[];
-}
-
-interface Files {
-    name: string;
-    filetype: string;
-}
+import { Part } from "../Interfaces";
 
 type Props = {
     part: Part;
@@ -47,6 +34,7 @@ export default function TableRow({
         <tr>
             <td>{part.priority}</td>
             <td>{part.name}</td>
+            <td>{part.material}</td>
             <td>{Object.values(Status)[part.status < 0 ? 0 : part.status]}</td>
             <td>{part.needed}</td>
             <td>

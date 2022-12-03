@@ -1,26 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import "../index.css";
+import { Part, Files } from "../Interfaces";
+import { v4 as uuid4 } from "uuid";
 
 type Props = {
     popupPart: Part;
+    defaultPart: Part;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
 };
-
-interface Files {
-    name: string;
-    filetype: string;
-}
-
-interface Part {
-    name: string;
-    status: number;
-    machine: string;
-    needed: string;
-    priority: string;
-    files: Files[];
-}
 
 enum Status {
     NEEDS_3D_PRINTING = "Needs 3D Printing",
@@ -33,30 +22,34 @@ enum Status {
 export default function ManagePopup({
     popupPart,
     setHotPart,
+    defaultPart,
     setPopupPart,
 }: Props) {
     const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
+    const [material, setMaterial] = useState(popupPart.machine);
     let [status, setStatus] = useState(popupPart.status);
     const [needed, setNeeded] = useState(popupPart.needed);
     const [priority, setPriority] = useState(popupPart.priority);
 
     const previousName = useRef("");
     const previousMachine = useRef("");
+    const previousMaterial = useRef("");
     const previousStatus = useRef(0);
     const previousNeeded = useRef("");
     const previousPriority = useRef("");
 
-    const [file, setFile] = useState<Files>({ name: "", filetype: "" });
+    const [file, setFile] = useState<Files>({ id: "", filetypes: [] });
     const partFile = useRef(null);
 
     useEffect(() => {
         previousName.current = name;
         previousMachine.current = machine;
         previousStatus.current = status;
+        previousMaterial.current = material;
         previousNeeded.current = needed;
         previousPriority.current = priority;
-    }, [name, machine, status, needed, priority]);
+    }, [name, machine, status, needed, priority, material]);
 
     useEffect(() => {
         setName(popupPart.name);
@@ -64,6 +57,7 @@ export default function ManagePopup({
         setStatus(popupPart.status);
         setNeeded(popupPart.needed);
         setPriority(popupPart.priority);
+        setMaterial(popupPart.material);
     }, [popupPart]);
 
     useEffect(() => {
@@ -76,14 +70,7 @@ export default function ManagePopup({
     }, [status]);
 
     const close = () => {
-        setPopupPart({
-            name: "",
-            status: 0,
-            machine: "",
-            needed: "",
-            priority: "",
-            files: [],
-        });
+        setPopupPart(defaultPart);
     };
 
     const handleFileUpload = (e: { target: { files: any } }) => {
@@ -92,34 +79,48 @@ export default function ManagePopup({
             const filename = files[0].name;
             const parts = filename.split(".");
             const fileType = parts[parts.length - 1];
-            setFile({ name: files[0], filetype: fileType });
+            console.log(files[0]); // ASK JAOCB ABOUT THIS
+            setFile({ id: files[0], filetypes: fileType });
         }
     };
 
     const savePart = () => {
+        if (popupPart.files.id === "") popupPart.files.id = uuid4();
         setHotPart({
+            id: popupPart.id,
             name: name,
             status: status,
+            material: popupPart.material,
             machine: machine,
             needed: needed,
             priority: "",
-            files: [...popupPart.files, file],
+            files: {
+                id: popupPart.files.id,
+                filetypes: [...popupPart.files.filetypes],
+            },
+            dev: { delete: false, upload: false, download: false },
         });
         close();
     };
 
     const deletePart = () => {
-        setHotPart(null);
+        setHotPart({
+            id: popupPart.id,
+            name: "",
+            status: 0,
+            material: "",
+            machine: "",
+            needed: "",
+            priority: "",
+            files: { id: "", filetypes: [] },
+            dev: { delete: true, upload: false, download: false },
+        });
         close();
     };
 
     return (
         <>
-            <Modal
-                show={popupPart.name !== ""}
-                onHide={() => close()}
-                tabIndex="-1"
-            >
+            <Modal show={popupPart.id !== ""} onHide={() => close()}>
                 <Modal.Header closeButton className="bg-black text-white">
                     <Modal.Title>Edit This Part</Modal.Title>
                 </Modal.Header>
@@ -140,6 +141,15 @@ export default function ManagePopup({
                                 className="form-control Popup w-50 BlackTextBox relative left-4"
                                 value={machine}
                                 onChange={(e) => setMachine(e.target.value)}
+                            />
+
+                            <br />
+                            <label className="Popup">Material: </label>
+                            <input
+                                type="text"
+                                className="form-control Popup w-50 BlackTextBox relative left-4"
+                                value={material}
+                                onChange={(e) => setMaterial(e.target.value)}
                             />
 
                             <br />

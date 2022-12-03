@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: "Market_Deco";
+    src: local("Market_Deco"),
+        url("./fonts/Market_Deco.ttf") format("truetype");
+    font-weight: bold;
+}
+
 .Popup {
     display: inline-block !important;
     width: 4em;
@@ -32,4 +39,73 @@
 
 body {
     background-color: rgb(24, 26, 27) !important;
+}
+
+.TableGrandParent {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.TableParent {
+    flex-grow: 1;
+    overflow: auto;
+    position: relative;
+    height: auto;
+}
+
+.ActualTable {
+    position: relative;
+    width: 100%;
+}
+
+.NavHead {
+    position: sticky;
+    top: 0;
+    background: #000000;
+    color: white;
+    z-index: 1;
+}
+
+.navbar a {
+    text-decoration: none;
+    overflow: auto;
+}
+
+.TableHeaderCell {
+    position: sticky;
+    top: 0;
+    padding-bottom: 0.75rem;
+}
+
+.AddPartButton {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    border-radius: 50px;
+    height: 3em;
+    width: 3em;
+    border: 2px solid #000;
+    background: #0d6efd;
+    font-size: 2em;
+    color: white;
+}
+
+.FakeLink {
+    background: none !important;
+    font-family: arial, sans-serif;
+    color: rgb(11, 11, 245);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.TextCenterDiv {
+    color: white;
+    font-family: "Market_Deco";
+    font-size: 2em;
+}
+
+.SearchBar {
+    border: 1px solid blue;
 }

@@ -2,12 +2,13 @@ export default function TableHeader() {
     return (
         <thead>
             <tr>
-                <th>Priority</th>
-                <th>Part</th>
-                <th>Status</th>
-                <th>Error</th>
-                <th className="w-5">Complete</th>
-                <th>Manage</th>
+                <th className="TableHeaderCell">Priority</th>
+                <th className="TableHeaderCell">Part</th>
+                <th className="TableHeaderCell">Material</th>
+                <th className="TableHeaderCell">Status</th>
+                <th className="w-5 TableHeaderCell">Error</th>
+                <th className="w-5 TableHeaderCell">Complete</th>
+                <th className="TableHeaderCell">Manage</th>
             </tr>
         </thead>
     );
