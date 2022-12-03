@@ -19,7 +19,3 @@ console.log("bruh!")
 uploadBytes(partsRef, new Uint8Array([123])).then((snapshot) => {
     console.log("Uploaded!")
 })
-
-
-
-
