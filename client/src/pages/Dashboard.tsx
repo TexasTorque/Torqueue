@@ -24,7 +24,8 @@ export default function Dashboard() {
     const [popupPart, setPopupPart] = useState<Part>(defaultPart);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
 
-    const [machineView, setMachineView] = useState("Select a machine");
+    const [machineView, setMachineView] = useState("Select a filter");
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         if (hotPart.name !== "")
@@ -57,13 +58,16 @@ export default function Dashboard() {
     return (
         <>
             <div className="fixed-top navbar NavHead flex">
-                <h2 className="flex pl-3">Machine: </h2>
+                <h2 className="flex pl-3">Filter: </h2>
                 <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
                     <Dropdown.Toggle variant="success">
                         {machineView}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
+                        <Dropdown.Item onClick={(e) => setMachineView("Lathe")}>
+                            View all
+                        </Dropdown.Item>
                         <Dropdown.Item
                             onClick={(e) => setMachineView("Tormach")}
                         >
@@ -83,20 +87,20 @@ export default function Dashboard() {
                     </Dropdown.Menu>
                 </Dropdown>
 
-                <div
-                    className="TextCenterDiv"
-                    style={{ position: "absolute", left: "50%", right: "50%" }}
+                <h1
+                    className="TextCenter TextCenterDiv"
+                    style={{ position: "absolute", left: "45%", right: "50%" }}
                 >
-                    <h1 className="TextCenter">Torqueue</h1>
-                </div>
+                    Torqueue
+                </h1>
 
                 <div style={{ marginLeft: "auto" }}>
                     <input
                         type="text"
                         placeholder="Search"
-                        className="SearchBar"
+                        className="SearchBar BlackTextBox"
                         style={{ margin: "1em" }}
-                        //onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
             </div>
@@ -117,7 +121,7 @@ export default function Dashboard() {
                                     setPopupPart={setPopupPart}
                                     hotPart={hotPart}
                                     setHotPart={setHotPart}
-                                    defaultPart={defaultPart}
+                                    searchQuery={searchQuery}
                                 />
                             </tbody>
                         </Table>

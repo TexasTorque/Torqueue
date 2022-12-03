@@ -2,7 +2,6 @@ import express, { json, urlencoded } from "express";
 import cors from "cors";
 import { getAllParts, editPart } from "./apiController";
 
-
 const app = express();
 const port = process.env.PORT || 5000;
 

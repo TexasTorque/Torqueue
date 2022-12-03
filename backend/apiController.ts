@@ -1,9 +1,14 @@
 import asyncHandler from "express-async-handler";
+import { getAllPartsFB, setPartFB } from "./firebase";
 
 export const getAllParts = asyncHandler(async (req, res) => {
-    res.send("Part");
+    res.send(await getAllPartsFB());
 });
 
 export const editPart = asyncHandler(async (req, res) => {
-    res.send("Edit");
+    res.send(await setPartFB(req.body.part));
+});
+
+export const uploadFile = asyncHandler(async (req, res) => {
+    res.send("upload file");
 });

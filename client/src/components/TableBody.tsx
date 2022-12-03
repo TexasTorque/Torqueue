@@ -4,147 +4,40 @@ import { Part } from "../Interfaces";
 
 type Props = {
     hotPart: Part;
-    defaultPart: Part;
+    searchQuery: string;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
 };
 
-export default function TableBody({ setPopupPart, setHotPart, defaultPart }: Props) {
-    let [parts, setParts] = useState<Part[]>([
-        defaultPart
-    ]);
+export default function TableBody({
+    setPopupPart,
+    setHotPart,
+    searchQuery,
+}: Props) {
+    let [parts, setParts] = useState<Part[]>([]);
 
     useEffect(() => {
-        const callGetAllBooks = async () => {
-            await getAllParts();
-        };
-        callGetAllBooks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        getAllParts();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getAllParts = async () => {
-        const testPartArray: Part[] = [
-            {
-                id: "46932649326",
-                name: "Swerve Plate",
-                status: 1,
-                material: "Aluminum",
-                machine: "Tormach",
-                needed: "1",
-                priority: "7",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            },
-            {
-                id: "76737543",
-                name: "Spacer",
-                status: 0,
-                material: "Aluminum",
-                machine: "Lathe",
-                needed: "1",
-                priority: "9",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            },
-            {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            },
-            {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            }, {
-                id: "5325325",
-                name: "Block",
-                status: 3,
-                material: "Polycarbonate",
-                machine: "Nebula",
-                needed: "1",
-                priority: "3",
-                files: {id: "", filetypes: []},
-                dev: {delete: false, upload: false, download: false},
-            },
-        ];
+        let responseJSON: any;
+        let listParts = [] as Part[];
+        await fetch(process.env.REACT_APP_BACKEND_URL + "getAllParts").then(
+            (response) =>
+                response.json().then((data) => {
+                    responseJSON = data[1].active;
+                })
+        );
 
-        testPartArray.sort((a, b) => {
+        for (let part in responseJSON) listParts.push(responseJSON[part]);
+
+        listParts.sort((a, b) => {
             return numberSortArray(a.priority, b.priority);
         });
 
-        setParts(testPartArray);
+        setParts(listParts);
     };
 
     const numberSortArray = (a: any, b: any) => {
@@ -153,16 +46,20 @@ export default function TableBody({ setPopupPart, setHotPart, defaultPart }: Pro
 
     return (
         <>
-            {parts.map((part: Part, id: number) => {
-                return (
-                    <PartRow
-                        key={id}
-                        part={part}
-                        setPopupPart={setPopupPart}
-                        setHotPart={setHotPart}
-                    />
-                );
-            })}
+            {parts
+                .filter((part) =>
+                    part.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((part: Part, id: number) => {
+                    return (
+                        <PartRow
+                            key={id}
+                            part={part}
+                            setPopupPart={setPopupPart}
+                            setHotPart={setHotPart}
+                        />
+                    );
+                })}
         </>
     );
 }
