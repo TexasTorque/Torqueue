@@ -31,39 +31,42 @@ export default function Dashboard() {
 
     const [popupPart, setPopupPart] = useState<Part>(defaultPart);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
+    const [completedPart, setCompletedPart] = useState<Part>(defaultPart);
 
     const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         const handleAsync = async () => {
-            if (hotPart.name !== "") {
-                console.log(hotPart);
-                const request = await axios.post(
-                    `${process.env.REACT_APP_BACKEND_URL}editPart`,
-                    {
-                        hotPart,
-                    }
-                );
+            if (hotPart.id === "") return;
 
-                if (request.data === "success") {
-                    setAlert({
-                        show: true,
-                        message: "Successfully modified " + hotPart.name + "!",
-                        success: true,
-                    });
-
-                    setTimeout(() => {
-                        setAlert({
-                            show: false,
-                            message: "",
-                            success: false,
-                        });
-                    }, 2000);
-
-                    setHotPart(defaultPart);
+            const request = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}editPart`,
+                {
+                    hotPart,
                 }
-            } else if (hotPart.dev.delete) {
+            );
+
+            const message = hotPart.dev.delete
+                ? "Successfully deleted part"
+                : "Successfully modified " + hotPart.name + "!";
+
+            if (request.data === "success") {
+                setAlert({
+                    show: true,
+                    message: message,
+                    success: true,
+                });
+
+                setTimeout(() => {
+                    setAlert({
+                        show: false,
+                        message: "",
+                        success: false,
+                    });
+                }, 2000);
+
+                setCompletedPart(hotPart);
             }
         };
 
@@ -146,7 +149,7 @@ export default function Dashboard() {
                             <tbody>
                                 <TableBody
                                     setPopupPart={setPopupPart}
-                                    hotPart={hotPart}
+                                    completedPart={completedPart}
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
                                     filter={filter}

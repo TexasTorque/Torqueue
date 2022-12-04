@@ -3,7 +3,7 @@ import PartRow from "./PartRow";
 import { Part } from "../Interfaces";
 
 type Props = {
-    hotPart: Part;
+    completedPart: Part;
     searchQuery: string;
     filter: string;
     setHotPart: (hotPart: Part) => void;
@@ -15,14 +15,14 @@ export default function TableBody({
     setHotPart,
     searchQuery,
     filter,
-    hotPart,
+    completedPart,
 }: Props) {
     let [parts, setParts] = useState<Part[]>([]);
 
     useEffect(() => {
         getAllParts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hotPart]);
+    }, [completedPart]);
 
     const getAllParts = async () => {
         let responseJSON: any;

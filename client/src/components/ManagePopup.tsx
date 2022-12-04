@@ -126,7 +126,12 @@ export default function ManagePopup({
             <Modal show={popupPart.id !== ""} onHide={() => close()}>
                 <Modal.Header closeButton className="bg-black text-white">
                     <Modal.Title>Edit This Part</Modal.Title>
-                    <button className="absolute right-5" onClick={(e) => close()}>X</button>
+                    <button
+                        className="absolute right-5"
+                        onClick={(e) => close()}
+                    >
+                        X
+                    </button>
                 </Modal.Header>
                 <form>
                     <Modal.Body className="bg-black text-white">

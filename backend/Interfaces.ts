@@ -1,3 +1,7 @@
+export interface Files {
+    id: string;
+}
+
 export interface Part {
     id: string;
     name: string;
@@ -6,8 +10,6 @@ export interface Part {
     machine: string;
     needed: string;
     priority: string;
-}
-
-export interface File {
-    name: string;
+    files: Files;
+    dev: {delete: boolean, upload: boolean, download: boolean};
 }

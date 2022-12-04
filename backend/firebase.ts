@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
 import { getDatabase, ref, get, set, child } from "firebase/database";
-import { Part, File } from "./Interfaces";
+import { Part, Files } from "./Interfaces";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -46,8 +46,15 @@ export const getAllPartsFB = async () => {
 export const setPartFB = async (part: Part) => {
     let error = false,
         errorMessage = "";
+    let location = "",
+        data: any;
 
-    await set(ref(db, `/active/${part.id}`), part).catch((e) => {
+    //location = part.dev.delete ? "archive" : "active";
+    console.log(part);
+    location = "active";
+    data = part.dev.delete ? null : part;
+
+    await set(ref(db, `/${location}/${part.id}`), data).catch((e) => {
         console.log(e);
         error = true;
         errorMessage = e;
@@ -57,7 +64,7 @@ export const setPartFB = async (part: Part) => {
     else return "success";
 };
 
-const uploadFileFB = async (file: File) => {
+const uploadFileFB = async (file: Files) => {
     uploadBytes(partsStorageRef, new Uint8Array([123])).then((snapshot) => {
         console.log("Uploaded!");
     });
