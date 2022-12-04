@@ -6,7 +6,7 @@ export const getAllParts = asyncHandler(async (req, res) => {
 });
 
 export const editPart = asyncHandler(async (req, res) => {
-    res.send(await setPartFB(req.body.part));
+    res.send(await setPartFB(req.body.hotPart));
 });
 
 export const uploadFile = asyncHandler(async (req, res) => {

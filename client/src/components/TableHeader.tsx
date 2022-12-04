@@ -4,6 +4,7 @@ export default function TableHeader() {
             <tr>
                 <th className="TableHeaderCell">Priority</th>
                 <th className="TableHeaderCell">Part</th>
+                <th className="TableHeaderCell">Machine</th>
                 <th className="TableHeaderCell">Material</th>
                 <th className="TableHeaderCell">Status</th>
                 <th className="w-5 TableHeaderCell">Error</th>

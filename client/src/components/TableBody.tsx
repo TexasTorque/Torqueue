@@ -5,6 +5,7 @@ import { Part } from "../Interfaces";
 type Props = {
     hotPart: Part;
     searchQuery: string;
+    filter: string;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
 };
@@ -13,13 +14,15 @@ export default function TableBody({
     setPopupPart,
     setHotPart,
     searchQuery,
+    filter,
+    hotPart,
 }: Props) {
     let [parts, setParts] = useState<Part[]>([]);
 
     useEffect(() => {
         getAllParts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [hotPart]);
 
     const getAllParts = async () => {
         let responseJSON: any;
@@ -41,12 +44,17 @@ export default function TableBody({
     };
 
     const numberSortArray = (a: any, b: any) => {
-        return a < b ? 1 : a > b ? -1 : 0;
+        return a > b ? 1 : a < b ? -1 : 0;
     };
+
+    if (filter === "View all" || filter === "Select a filter") filter = "";
 
     return (
         <>
             {parts
+                .filter((part) =>
+                    part.machine.toLowerCase().includes(filter.toLowerCase())
+                )
                 .filter((part) =>
                     part.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )

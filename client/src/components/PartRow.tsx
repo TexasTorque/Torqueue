@@ -34,6 +34,7 @@ export default function TableRow({
         <tr>
             <td>{part.priority}</td>
             <td>{part.name}</td>
+            <td>{part.machine}</td>
             <td>{part.material}</td>
             <td>{Object.values(Status)[part.status < 0 ? 0 : part.status]}</td>
             <td>{part.needed}</td>

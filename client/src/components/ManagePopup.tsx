@@ -3,6 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import "../index.css";
 import { Part, Files } from "../Interfaces";
 import { v4 as uuid4 } from "uuid";
+import Dropdown from "react-bootstrap/Dropdown";
 
 type Props = {
     popupPart: Part;
@@ -17,6 +18,7 @@ enum Status {
     NEEDS_MACHINING = "Needs Machining",
     NEEDS_PROCESSING = "Needs Processing",
     NEEDS_ASSEMBLY = "Needs Assembly",
+    COMPLETE = "Complete!",
 }
 
 export default function ManagePopup({
@@ -85,7 +87,8 @@ export default function ManagePopup({
     };
 
     const savePart = () => {
-        if (popupPart.files.id === "") popupPart.files.id = uuid4();
+        if (popupPart.id === "") popupPart.id = uuid4();
+
         setHotPart({
             id: popupPart.id,
             name: name,
@@ -93,10 +96,10 @@ export default function ManagePopup({
             material: popupPart.material,
             machine: machine,
             needed: needed,
-            priority: "",
+            priority: priority,
             files: {
-                id: popupPart.files.id,
-                filetypes: [...popupPart.files.filetypes],
+                id: "",
+                filetypes: [],
             },
             dev: { delete: false, upload: false, download: false },
         });
@@ -123,6 +126,7 @@ export default function ManagePopup({
             <Modal show={popupPart.id !== ""} onHide={() => close()}>
                 <Modal.Header closeButton className="bg-black text-white">
                     <Modal.Title>Edit This Part</Modal.Title>
+                    <button className="absolute right-5" onClick={(e) => close()}>X</button>
                 </Modal.Header>
                 <form>
                     <Modal.Body className="bg-black text-white">
@@ -135,13 +139,40 @@ export default function ManagePopup({
                                 onChange={(e) => setName(e.target.value)}
                             />
                             <br />
+                            <br />
+
                             <label className="Popup">Machine: </label>
-                            <input
-                                type="text"
-                                className="form-control Popup w-50 BlackTextBox relative left-4"
-                                value={machine}
-                                onChange={(e) => setMachine(e.target.value)}
-                            />
+                            <Dropdown>
+                                <Dropdown.Toggle
+                                    variant="primary"
+                                    className="ManagePopupDropdown"
+                                >
+                                    {machine}
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu className="ManagePopupDropdownMenu">
+                                    <Dropdown.Item
+                                        onClick={(e) => setMachine("Tormach")}
+                                    >
+                                        Tormach
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        onClick={(e) => setMachine("Nebula")}
+                                    >
+                                        Nebula
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        onClick={(e) => setMachine("Omio")}
+                                    >
+                                        Omio
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        onClick={(e) => setMachine("Lathe")}
+                                    >
+                                        Lathe
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
 
                             <br />
                             <label className="Popup">Material: </label>

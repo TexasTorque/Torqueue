@@ -7,6 +7,8 @@ import ManagePopup from "../components/ManagePopup";
 import "../index.css";
 import { Part } from "../Interfaces";
 import { v4 as uuid4 } from "uuid";
+import axios from "axios";
+import { classNames } from "@hkamran/utility-web";
 
 const defaultPart = {
     id: "",
@@ -15,37 +17,57 @@ const defaultPart = {
     machine: "",
     material: "",
     needed: "0",
-    priority: "",
+    priority: "0",
     files: { id: "", filetypes: [""] },
     dev: { delete: false, upload: false, download: false },
 };
 
 export default function Dashboard() {
+    const [alert, setAlert] = useState({
+        show: false,
+        message: "",
+        success: false,
+    });
+
     const [popupPart, setPopupPart] = useState<Part>(defaultPart);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
 
-    const [machineView, setMachineView] = useState("Select a filter");
+    const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (hotPart.name !== "")
-            fetch(process.env.REACT_APP_BACKEND_URL + "/editPart", {
-                method: "post",
-                headers: new Headers({
-                    "Content-type":
-                        "application/x-www-form-urlencoded; charset=UTF-8",
-                }),
-                body: hotPart as any,
-            });
-        else if (hotPart.dev.delete)
-            fetch(process.env.REACT_APP_BACKEND_URL + "/deletePart", {
-                method: "post",
-                headers: new Headers({
-                    "Content-type":
-                        "application/x-www-form-urlencoded; charset=UTF-8",
-                }),
-                body: hotPart.id as string,
-            });
+        const handleAsync = async () => {
+            if (hotPart.name !== "") {
+                console.log(hotPart);
+                const request = await axios.post(
+                    `${process.env.REACT_APP_BACKEND_URL}editPart`,
+                    {
+                        hotPart,
+                    }
+                );
+
+                if (request.data === "success") {
+                    setAlert({
+                        show: true,
+                        message: "Successfully modified " + hotPart.name + "!",
+                        success: true,
+                    });
+
+                    setTimeout(() => {
+                        setAlert({
+                            show: false,
+                            message: "",
+                            success: false,
+                        });
+                    }, 2000);
+
+                    setHotPart(defaultPart);
+                }
+            } else if (hotPart.dev.delete) {
+            }
+        };
+
+        handleAsync();
     }, [hotPart]);
 
     const handleAddPart = (e: any) => {
@@ -57,31 +79,36 @@ export default function Dashboard() {
 
     return (
         <>
+            <div
+                className={classNames(
+                    "fixed-top alert",
+                    alert.success ? "alert-success" : "alert-danger"
+                )}
+                style={{ display: alert.show ? "" : "none" }}
+            >
+                {alert.message}
+            </div>
             <div className="fixed-top navbar NavHead flex">
                 <h2 className="flex pl-3">Filter: </h2>
                 <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
                     <Dropdown.Toggle variant="success">
-                        {machineView}
+                        {filter}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={(e) => setMachineView("Lathe")}>
+                        <Dropdown.Item onClick={(e) => setFilter("View all")}>
                             View all
                         </Dropdown.Item>
-                        <Dropdown.Item
-                            onClick={(e) => setMachineView("Tormach")}
-                        >
+                        <Dropdown.Item onClick={(e) => setFilter("Tormach")}>
                             Tormach
                         </Dropdown.Item>
-                        <Dropdown.Item
-                            onClick={(e) => setMachineView("Nebula")}
-                        >
+                        <Dropdown.Item onClick={(e) => setFilter("Nebula")}>
                             Nebula
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => setMachineView("Omio")}>
+                        <Dropdown.Item onClick={(e) => setFilter("Omio")}>
                             Omio
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => setMachineView("Lathe")}>
+                        <Dropdown.Item onClick={(e) => setFilter("Lathe")}>
                             Lathe
                         </Dropdown.Item>
                     </Dropdown.Menu>
@@ -122,6 +149,7 @@ export default function Dashboard() {
                                     hotPart={hotPart}
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
+                                    filter={filter}
                                 />
                             </tbody>
                         </Table>

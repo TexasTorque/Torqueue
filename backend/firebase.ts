@@ -31,9 +31,7 @@ export const getAllPartsFB = async () => {
     await get(child(dbRef, `/`))
         .then((snapshot) => {
             if (snapshot.exists()) {
-                console.log(snapshot.val());
                 parts.push(snapshot.val());
-                console.log(snapshot.val());
             }
         })
         .catch((error) => {

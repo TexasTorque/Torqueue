@@ -4,8 +4,7 @@
 
 @font-face {
     font-family: "Market_Deco";
-    src: local("Market_Deco"),
-        url("./fonts/Market_Deco.ttf") format("truetype");
+    src: local("Market_Deco"), url("./fonts/Market_Deco.ttf") format("truetype");
     font-weight: bold;
 }
 
@@ -108,4 +107,19 @@ body {
 
 .SearchBar {
     border: 1px solid blue;
+}
+
+.ManagePopupDropdown {
+    position: absolute;
+    bottom: -0.3rem;
+    left: 6em;
+    height: 2.3em;
+    width: 14em;
+}
+
+.ManagePopupDropdownMenu {
+    position: absolute;
+    bottom: -0.3rem;
+    left: 6em;
+    width: 14em;
 }
