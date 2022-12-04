@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getDownloadURL, getStorage, ref as sref, uploadBytes } from "firebase/storage";
+import { getBlob, getBytes, getDownloadURL, getStorage, getStream, ref as sref, uploadBytes } from "firebase/storage";
 import { getDatabase, ref as dref, get, set, child } from "firebase/database";
 import { Part, Files } from "./Interfaces";
 import dotenv from "dotenv";
+import e from "express";
 dotenv.config();
 
 const firebaseConfig = {
@@ -66,12 +67,23 @@ export const setPartFB = async (part: Part) => {
     else return "success";
 };
 
-export async function uploadFileFirebase(partFile: any, fileId: string) {
-    let targetRef = sref(storage, `parts_files/${fileId}`);
-    await uploadBytes(targetRef, partFile.buffer);
+export async function uploadPartFirebase(partFile: any, fileId: string, fileType: string) {
+    let targetRef;
+    let error = false;
+    let errorMessage = "";
+
+    if (fileType === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
+    else targetRef = sref(storage, `parts_files/${fileId}`);
+    await uploadBytes(targetRef, partFile.buffer).catch((e) => {
+        console.log(e);
+        error = true;
+        errorMessage = e; 
+    });
+    if (error) return errorMessage;
+    return "success";
 }
 
-export async function getFileDownloadURLFirebase(fileId: string) {
+export async function getPartDownloadURLFirebase(fileId: string) {
     let targetRef = sref(storage, `parts_files/${fileId}`);
-    return await getDownloadURL(targetRef);
+    return await getBytes(targetRef);
 }
