@@ -123,3 +123,18 @@ body {
     left: 6em;
     width: 14em;
 }
+
+.NoteBox {
+    position: relative;
+    display: flex;
+    left: 1em;
+    top: 2em;
+    resize: none;
+    padding-bottom: 5em;
+    margin-bottom: 2em;
+}
+
+.NoteLabel {
+    position: relative;
+    top: -8em;
+}

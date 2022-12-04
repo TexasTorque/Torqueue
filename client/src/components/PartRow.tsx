@@ -1,19 +1,10 @@
 import { Button } from "react-bootstrap";
-import { Part } from "../Interfaces";
-
+import { Part, Status } from "../Interfaces";
 type Props = {
     part: Part;
     setPopupPart: (part: Part) => void;
     setHotPart: (part: Part) => void;
 };
-
-enum Status {
-    NEEDS_3D_PRINTING = "Needs 3D Printing",
-    NEEDS_CAM = "Needs CAM",
-    NEEDS_MACHINING = "Needs Machining",
-    NEEDS_PROCESSING = "Needs Processing",
-    NEEDS_ASSEMBLY = "Needs Assembly",
-}
 
 export default function TableRow({
     part,

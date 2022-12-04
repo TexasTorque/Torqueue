@@ -1,5 +1,3 @@
-
-
 export interface Part {
     id: string;
     name: string;
@@ -8,16 +6,23 @@ export interface Part {
     machine: string;
     needed: string;
     priority: string;
-    cad_uploaded: boolean;
-    cam_uploaded: boolean;
+    notes: string;
     files: {
-        cadext: string;
-        camext: string;
-    }
-    dev: {
-        delete: boolean, 
-        upload: boolean, 
-        download: boolean,
-        
+        cadExt: string;
+        camExt: string;
     };
+    dev: {
+        delete: boolean;
+        upload: boolean;
+        download: boolean;
+    };
+}
+
+export enum Status {
+    NEEDS_3D_PRINTING = "Needs 3D Printing",
+    NEEDS_CAM = "Needs CAM",
+    NEEDS_MACHINING = "Needs Machining",
+    NEEDS_PROCESSING = "Needs Processing",
+    NEEDS_ASSEMBLY = "Needs Assembly",
+    COMPLETE = "Complete!",
 }

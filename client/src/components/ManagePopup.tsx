@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import "../index.css";
-import { Part, Files } from "../Interfaces";
+import { Part, Status } from "../Interfaces";
 import { v4 as uuid4 } from "uuid";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -11,15 +11,6 @@ type Props = {
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
 };
-
-enum Status {
-    NEEDS_3D_PRINTING = "Needs 3D Printing",
-    NEEDS_CAM = "Needs CAM",
-    NEEDS_MACHINING = "Needs Machining",
-    NEEDS_PROCESSING = "Needs Processing",
-    NEEDS_ASSEMBLY = "Needs Assembly",
-    COMPLETE = "Complete!",
-}
 
 export default function ManagePopup({
     popupPart,
@@ -33,6 +24,7 @@ export default function ManagePopup({
     let [status, setStatus] = useState(popupPart.status);
     const [needed, setNeeded] = useState(popupPart.needed);
     const [priority, setPriority] = useState(popupPart.priority);
+    const [notes, setNotes] = useState(popupPart.notes);
 
     const previousName = useRef("");
     const previousMachine = useRef("");
@@ -40,8 +32,9 @@ export default function ManagePopup({
     const previousStatus = useRef(0);
     const previousNeeded = useRef("");
     const previousPriority = useRef("");
+    const previousNotes = useRef("");
 
-    const [file, setFile] = useState<Files>({ id: "", filetypes: [] });
+    const [file, setFile] = useState("");
     const partFile = useRef(null);
 
     useEffect(() => {
@@ -51,7 +44,8 @@ export default function ManagePopup({
         previousMaterial.current = material;
         previousNeeded.current = needed;
         previousPriority.current = priority;
-    }, [name, machine, status, needed, priority, material]);
+        previousNotes.current = notes;
+    }, [name, machine, status, needed, priority, material, notes]);
 
     useEffect(() => {
         setName(popupPart.name);
@@ -60,6 +54,7 @@ export default function ManagePopup({
         setNeeded(popupPart.needed);
         setPriority(popupPart.priority);
         setMaterial(popupPart.material);
+        setNotes(popupPart.notes);
     }, [popupPart]);
 
     useEffect(() => {
@@ -82,7 +77,7 @@ export default function ManagePopup({
             const parts = filename.split(".");
             const fileType = parts[parts.length - 1];
             console.log(files[0]); // ASK JAOCB ABOUT THIS
-            setFile({ id: files[0], filetypes: fileType });
+            //setFile({ id: files[0], filetypes: fileType });
         }
     };
 
@@ -98,9 +93,10 @@ export default function ManagePopup({
             needed: needed,
             priority: priority,
             files: {
-                id: "",
-                filetypes: [],
+                camExt: "",
+                cadExt: "",
             },
+            notes: notes,
             dev: { delete: false, upload: false, download: false },
         });
         close();
@@ -115,7 +111,11 @@ export default function ManagePopup({
             machine: "",
             needed: "",
             priority: "",
-            files: { id: "", filetypes: [] },
+            notes: "",
+            files: {
+                camExt: "",
+                cadExt: "",
+            },
             dev: { delete: true, upload: false, download: false },
         });
         close();
@@ -312,6 +312,16 @@ export default function ManagePopup({
                                     }}
                                 />
                             </div>
+
+                            <br />
+
+                            <label className="Popup NoteLabel">Notes: </label>
+                            <textarea
+                                placeholder="Add a note"
+                                className="form-control Popup w-50 BlackTextBox NoteBox"
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                            />
 
                             <br />
                             <br />

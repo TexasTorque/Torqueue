@@ -18,7 +18,8 @@ const defaultPart = {
     material: "",
     needed: "0",
     priority: "0",
-    files: { id: "", filetypes: [""] },
+    notes: "",
+    files: { camExt: "", cadExt: "" },
     dev: { delete: false, upload: false, download: false },
 };
 
@@ -99,19 +100,24 @@ export default function Dashboard() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={(e) => setFilter("View all")}>
-                            View all
+                        <Dropdown.Item onClick={() => setFilter("None")}>
+                            None
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => setFilter("Tormach")}>
+                        <Dropdown.Item
+                            onClick={() => setFilter("All machines")}
+                        >
+                            All machines
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => setFilter("Tormach")}>
                             Tormach
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => setFilter("Nebula")}>
+                        <Dropdown.Item onClick={() => setFilter("Nebula")}>
                             Nebula
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => setFilter("Omio")}>
+                        <Dropdown.Item onClick={() => setFilter("Omio")}>
                             Omio
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => setFilter("Lathe")}>
+                        <Dropdown.Item onClick={() => setFilter("Lathe")}>
                             Lathe
                         </Dropdown.Item>
                     </Dropdown.Menu>

@@ -18,6 +18,7 @@ export default function TableBody({
     completedPart,
 }: Props) {
     let [parts, setParts] = useState<Part[]>([]);
+    let includeCompleted = false;
 
     useEffect(() => {
         getAllParts();
@@ -47,14 +48,20 @@ export default function TableBody({
         return a > b ? 1 : a < b ? -1 : 0;
     };
 
-    if (filter === "View all" || filter === "Select a filter") filter = "";
-
+    if (filter === "All machines" || filter === "Select a filter") {
+        includeCompleted = false;
+        filter = "";
+    } else if (filter === "None") {
+        filter = "";
+        includeCompleted = true;
+    }
     return (
         <>
             {parts
                 .filter((part) =>
                     part.machine.toLowerCase().includes(filter.toLowerCase())
                 )
+                .filter((part) => (includeCompleted ? true : part.status !== 5))
                 .filter((part) =>
                     part.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
