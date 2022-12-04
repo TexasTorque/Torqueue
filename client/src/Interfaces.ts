@@ -1,7 +1,4 @@
-export interface Files {
-    id: string;
-    filetypes: string[];
-}
+
 
 export interface Part {
     id: string;
@@ -11,6 +8,16 @@ export interface Part {
     machine: string;
     needed: string;
     priority: string;
-    files: Files;
-    dev: {delete: boolean, upload: boolean, download: boolean};
+    cad_uploaded: boolean;
+    cam_uploaded: boolean;
+    files: {
+        cadext: string;
+        camext: string;
+    }
+    dev: {
+        delete: boolean, 
+        upload: boolean, 
+        download: boolean,
+        
+    };
 }
