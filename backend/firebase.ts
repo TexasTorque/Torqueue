@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { getDatabase, ref, get, set, child } from "firebase/database";
+import { getDownloadURL, getStorage, ref as sref, uploadBytes } from "firebase/storage";
+import { getDatabase, ref as dref, get, set, child } from "firebase/database";
 import { Part, Files } from "./Interfaces";
 import dotenv from "dotenv";
 dotenv.config();
@@ -17,11 +17,13 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 const storage = getStorage(app);
-const partsStorageRef = storageRef(storage, "parts_files");
+const partsRef = sref(storage, "/parts_files");
+const camRef = sref(storage, "/cam_files");
 
 const db = getDatabase();
-const dbRef = ref(getDatabase());
+const dbRef = dref(getDatabase());
 
 export const getAllPartsFB = async () => {
     let parts = [""];
@@ -54,7 +56,7 @@ export const setPartFB = async (part: Part) => {
     location = "active";
     data = part.dev.delete ? null : part;
 
-    await set(ref(db, `/${location}/${part.id}`), data).catch((e) => {
+    await set(dref(db, `/${location}/${part.id}`), data).catch((e) => {
         console.log(e);
         error = true;
         errorMessage = e;
@@ -64,8 +66,12 @@ export const setPartFB = async (part: Part) => {
     else return "success";
 };
 
-const uploadFileFB = async (file: Files) => {
-    uploadBytes(partsStorageRef, new Uint8Array([123])).then((snapshot) => {
-        console.log("Uploaded!");
-    });
-};
+export async function uploadFileFirebase(partFile: any, fileId: string) {
+    let targetRef = sref(storage, `parts_files/${fileId}`);
+    await uploadBytes(targetRef, partFile.buffer);
+}
+
+export async function getFileDownloadURLFirebase(fileId: string) {
+    let targetRef = sref(storage, `parts_files/${fileId}`);
+    return await getDownloadURL(targetRef);
+}
