@@ -7,7 +7,7 @@ export default function TableHeader() {
                 <th className="TableHeaderCell">Machine</th>
                 <th className="TableHeaderCell">Material</th>
                 <th className="TableHeaderCell">Status</th>
-                <th className="w-5 TableHeaderCell">Error</th>
+                <th className="w-5 TableHeaderCell">Remaining</th>
                 <th className="w-5 TableHeaderCell">Complete</th>
                 <th className="TableHeaderCell">Manage</th>
             </tr>

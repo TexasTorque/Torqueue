@@ -3,7 +3,6 @@ import { getBlob, getBytes, getDownloadURL, getStorage, getStream, ref as sref, 
 import { getDatabase, ref as dref, get, set, child } from "firebase/database";
 import { Part, Files } from "./Interfaces";
 import dotenv from "dotenv";
-import e from "express";
 dotenv.config();
 
 const firebaseConfig = {

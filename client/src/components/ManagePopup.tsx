@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import "../index.css";
 import { Part, Status } from "../Interfaces";
-import { v4 as uuid4 } from "uuid";
 import Dropdown from "react-bootstrap/Dropdown";
 
 type Props = {
     popupPart: Part;
     defaultPart: Part;
+    showPopup: boolean;
+    setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
 };
@@ -17,14 +18,17 @@ export default function ManagePopup({
     setHotPart,
     defaultPart,
     setPopupPart,
+    showPopup,
+    setShowPopup,
 }: Props) {
-    const [name, setName] = useState(popupPart.name);
+    let [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
     const [material, setMaterial] = useState(popupPart.machine);
     let [status, setStatus] = useState(popupPart.status);
     const [needed, setNeeded] = useState(popupPart.needed);
     const [priority, setPriority] = useState(popupPart.priority);
     const [notes, setNotes] = useState(popupPart.notes);
+    const [popupName, setPopupName] = useState("");
 
     const previousName = useRef("");
     const previousMachine = useRef("");
@@ -45,6 +49,17 @@ export default function ManagePopup({
         previousNeeded.current = needed;
         previousPriority.current = priority;
         previousNotes.current = notes;
+
+        const statusKeyboardInput = (e: any) => {
+            if (e.keyCode === 39) setStatus(++status);
+            else if (e.keyCode === 37) setStatus(--status);
+            else if (e.keyCode === 13) savePart();
+        };
+
+        window.addEventListener("keydown", statusKeyboardInput);
+        return () => window.removeEventListener("keydown", statusKeyboardInput);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [name, machine, status, needed, priority, material, notes]);
 
     useEffect(() => {
@@ -55,20 +70,9 @@ export default function ManagePopup({
         setPriority(popupPart.priority);
         setMaterial(popupPart.material);
         setNotes(popupPart.notes);
+        if (popupPart.name === "") setPopupName("Add a new part");
+        else setPopupName(`Edit ${popupPart.name}`);
     }, [popupPart]);
-
-    useEffect(() => {
-        const statusKeyboardInput = (e: any) => {
-            if (e.keyCode === 39) setStatus(++status);
-            else if (e.keyCode === 37) setStatus(--status);
-        };
-        window.addEventListener("keydown", statusKeyboardInput);
-        return () => window.removeEventListener("keydown", statusKeyboardInput);
-    }, [status]);
-
-    const close = () => {
-        setPopupPart(defaultPart);
-    };
 
     const handleFileUpload = (e: { target: { files: any } }) => {
         const { files } = e.target;
@@ -82,8 +86,6 @@ export default function ManagePopup({
     };
 
     const savePart = () => {
-        if (popupPart.id === "") popupPart.id = uuid4();
-
         setHotPart({
             id: popupPart.id,
             name: name,
@@ -99,7 +101,7 @@ export default function ManagePopup({
             notes: notes,
             dev: { delete: false, upload: false, download: false },
         });
-        close();
+        setShowPopup(false);
     };
 
     const deletePart = () => {
@@ -118,294 +120,284 @@ export default function ManagePopup({
             },
             dev: { delete: true, upload: false, download: false },
         });
-        close();
+        setShowPopup(false);
     };
 
     return (
         <>
-            <Modal show={popupPart.id !== ""} onHide={() => close()}>
+            <Modal show={showPopup} onHide={() => setShowPopup(false)}>
                 <Modal.Header closeButton className="bg-black text-white">
-                    <Modal.Title>Edit This Part</Modal.Title>
+                    <Modal.Title>{popupName}</Modal.Title>
                     <button
                         className="absolute right-5"
-                        onClick={(e) => close()}
+                        onClick={(e) => setShowPopup(false)}
                     >
                         X
                     </button>
                 </Modal.Header>
-                <form>
-                    <Modal.Body className="bg-black text-white">
-                        <div className="">
-                            <label className="Popup">Name: </label>
-                            <input
-                                type="text"
-                                className="form-control Popup w-50 BlackTextBox relative left-4"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <br />
-                            <br />
+                <Modal.Body className="bg-black text-white">
+                    <div className="">
+                        <label className="Popup">Name: </label>
+                        <input
+                            type="text"
+                            className="form-control Popup w-50 BlackTextBox relative left-4"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <br />
+                        <br />
 
-                            <label className="Popup">Machine: </label>
-                            <Dropdown>
-                                <Dropdown.Toggle
-                                    variant="primary"
-                                    className="ManagePopupDropdown"
+                        <label className="Popup">Machine: </label>
+                        <Dropdown>
+                            <Dropdown.Toggle
+                                variant="primary"
+                                className="ManagePopupDropdown"
+                            >
+                                {machine}
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu className="ManagePopupDropdownMenu">
+                                <Dropdown.Item
+                                    onClick={() => setMachine("Tormach")}
                                 >
-                                    {machine}
-                                </Dropdown.Toggle>
+                                    Tormach
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={() => setMachine("Nebula")}
+                                >
+                                    Nebula
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={() => setMachine("Omio")}
+                                >
+                                    Omio
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={() => setMachine("Lathe")}
+                                >
+                                    Lathe
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
 
-                                <Dropdown.Menu className="ManagePopupDropdownMenu">
-                                    <Dropdown.Item
-                                        onClick={(e) => setMachine("Tormach")}
-                                    >
-                                        Tormach
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        onClick={(e) => setMachine("Nebula")}
-                                    >
-                                        Nebula
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        onClick={(e) => setMachine("Omio")}
-                                    >
-                                        Omio
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        onClick={(e) => setMachine("Lathe")}
-                                    >
-                                        Lathe
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
+                        <br />
+                        <label className="Popup">Material: </label>
+                        <input
+                            type="text"
+                            className="form-control Popup w-50 BlackTextBox relative left-4"
+                            value={material}
+                            onChange={(e) => setMaterial(e.target.value)}
+                        />
 
-                            <br />
-                            <label className="Popup">Material: </label>
+                        <br />
+                        <label className="Popup">Status: </label>
+                        <button
+                            className={`relative left-2 ${
+                                status <= 0 ? "opacity-0" : ""
+                            }`}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setStatus(--status);
+                            }}
+                        >
+                            &#60;
+                        </button>
+                        <input
+                            type="text"
+                            className="form-control Popup w-50 BlackTextBox relative left-2"
+                            value={
+                                Object.values(Status)[status < 0 ? 0 : status]
+                            }
+                            onChange={(e) =>
+                                setStatus(Math.max(0, parseInt(e.target.value)))
+                            }
+                        />
+                        <button
+                            className={`relative left-2 ${
+                                status > 3 ? "opacity-0" : ""
+                            }`}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setStatus(++status);
+                            }}
+                        >
+                            &#62;
+                        </button>
+                        <br />
+                        <br />
+
+                        <div className="btn-group ">
+                            <label className="Popup">Remaining: </label>
+                            <input
+                                type="button"
+                                value="-"
+                                className="btn btn-danger left-9"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const value =
+                                        needed === "" ? 0 : parseInt(needed);
+                                    setNeeded("" + Math.max(0, value - 1));
+                                }}
+                            />
+
                             <input
                                 type="text"
-                                className="form-control Popup w-50 BlackTextBox relative left-4"
-                                value={material}
-                                onChange={(e) => setMaterial(e.target.value)}
+                                className="outline outline-1 w-20 text-center relative left-10 text-black BlackTextBox"
+                                value={needed}
+                                onChange={(e) => {
+                                    e.preventDefault();
+                                    setNeeded(e.target.value);
+                                }}
                             />
 
-                            <br />
-                            <label className="Popup">Status: </label>
-                            <button
-                                className={`relative left-2 ${
-                                    status <= 0 ? "opacity-0" : ""
-                                }`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setStatus(--status);
-                                }}
-                            >
-                                &#60;
-                            </button>
                             <input
-                                type="text"
-                                className="form-control Popup w-50 BlackTextBox relative left-2"
-                                value={
-                                    Object.values(Status)[
-                                        status < 0 ? 0 : status
-                                    ]
-                                }
-                                onChange={(e) =>
-                                    setStatus(
-                                        Math.max(0, parseInt(e.target.value))
-                                    )
-                                }
+                                type="button"
+                                value="+"
+                                className="btn btn-success left-11 rounded-sm"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const value =
+                                        needed === "" ? 0 : parseInt(needed);
+                                    setNeeded(value + 1 + "");
+                                }}
                             />
-                            <button
-                                className={`relative left-2 ${
-                                    status > 3 ? "opacity-0" : ""
-                                }`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setStatus(++status);
-                                }}
-                            >
-                                &#62;
-                            </button>
-                            <br />
-                            <br />
-
-                            <div className="btn-group ">
-                                <label className="Popup">Error: </label>
-                                <input
-                                    type="button"
-                                    value="-"
-                                    className="btn btn-danger left-9"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const value =
-                                            needed === ""
-                                                ? 0
-                                                : parseInt(needed);
-                                        setNeeded("" + (value - 1));
-                                    }}
-                                />
-
-                                <input
-                                    type="text"
-                                    className="outline outline-1 w-20 text-center relative left-10 text-black BlackTextBox"
-                                    value={needed}
-                                    onChange={(e) => {
-                                        e.preventDefault();
-                                        setNeeded(e.target.value);
-                                    }}
-                                />
-
-                                <input
-                                    type="button"
-                                    value="+"
-                                    className="btn btn-success left-11 rounded-sm"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const value =
-                                            needed === ""
-                                                ? 0
-                                                : parseInt(needed);
-                                        setNeeded(value + 1 + "");
-                                    }}
-                                />
-                            </div>
-
-                            <br />
-                            <br />
-                            <div className="btn-group ">
-                                <label className="Popup">Priority: </label>
-                                <input
-                                    type="button"
-                                    value="-"
-                                    className="btn btn-danger left-9"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const value =
-                                            priority === ""
-                                                ? 0
-                                                : parseInt(priority);
-                                        setPriority("" + (value - 1));
-                                    }}
-                                />
-
-                                <input
-                                    type="text"
-                                    className="outline outline-1 w-20 text-center relative left-10 text-black BlackTextBox"
-                                    value={priority}
-                                    onChange={(e) => {
-                                        e.preventDefault();
-                                        setPriority(e.target.value);
-                                    }}
-                                />
-
-                                <input
-                                    type="button"
-                                    value="+"
-                                    className="btn btn-success left-11 rounded-sm"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const value =
-                                            priority === ""
-                                                ? 0
-                                                : parseInt(priority);
-                                        setPriority(value + 1 + "");
-                                    }}
-                                />
-                            </div>
-
-                            <br />
-
-                            <label className="Popup NoteLabel">Notes: </label>
-                            <textarea
-                                placeholder="Add a note"
-                                className="form-control Popup w-50 BlackTextBox NoteBox"
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                            />
-
-                            <br />
-                            <br />
-                            <button
-                                type="button"
-                                value="+"
-                                className="btn btn-secondary left-11 rounded-sm"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    if (partFile.current !== null) {
-                                        partFile.current["click"]();
-                                    }
-                                }}
-                            >
-                                Upload CAD
-                            </button>
-                            <button
-                                type="button"
-                                value="+"
-                                className="btn btn-secondary left-11 rounded-sm"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        needed === "" ? 0 : parseInt(needed);
-                                    setNeeded(value + 1 + "");
-                                }}
-                            >
-                                Download CAD
-                            </button>
-
-                            <button
-                                type="button"
-                                value="+"
-                                className="btn btn-secondary left-11 rounded-sm"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        needed === "" ? 0 : parseInt(needed);
-                                    setNeeded(value + 1 + "");
-                                }}
-                            >
-                                Upload GCODE
-                            </button>
-                            <button
-                                type="button"
-                                value="+"
-                                className="btn btn-secondary left-11 rounded-sm"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        needed === "" ? 0 : parseInt(needed);
-                                    setNeeded(value + 1 + "");
-                                }}
-                            >
-                                Download GCODE
-                            </button>
                         </div>
-                    </Modal.Body>
 
-                    <Modal.Footer className="bg-black">
-                        <Button
-                            variant="secondary"
-                            className="btn btn-danger absolute left-0"
+                        <br />
+                        <br />
+                        <div className="btn-group ">
+                            <label className="Popup">Priority: </label>
+                            <input
+                                type="button"
+                                value="-"
+                                className="btn btn-danger left-9"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const value =
+                                        priority === ""
+                                            ? 0
+                                            : parseInt(priority);
+                                    setPriority("" + Math.max(0, value - 1));
+                                }}
+                            />
+
+                            <input
+                                type="text"
+                                className="outline outline-1 w-20 text-center relative left-10 text-black BlackTextBox"
+                                value={priority}
+                                onChange={(e) => {
+                                    e.preventDefault();
+                                    setPriority(e.target.value);
+                                }}
+                            />
+
+                            <input
+                                type="button"
+                                value="+"
+                                className="btn btn-success left-11 rounded-sm"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const value =
+                                        priority === ""
+                                            ? 0
+                                            : parseInt(priority);
+                                    setPriority(value + 1 + "");
+                                }}
+                            />
+                        </div>
+
+                        <br />
+
+                        <label className="Popup NoteLabel">Notes: </label>
+                        <textarea
+                            placeholder="Add a note"
+                            className="form-control Popup w-50 BlackTextBox NoteBox"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                        />
+
+                        <br />
+                        <br />
+                        <button
+                            type="button"
+                            value="+"
+                            className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                deletePart();
+                                if (partFile.current !== null) {
+                                    partFile.current["click"]();
+                                }
                             }}
                         >
-                            Delete
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            className="btn btn-success "
-                            type="submit"
+                            Upload CAD
+                        </button>
+                        <button
+                            type="button"
+                            value="+"
+                            className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                savePart();
+                                const value =
+                                    needed === "" ? 0 : parseInt(needed);
+                                setNeeded(value + 1 + "");
                             }}
                         >
-                            Save
-                        </Button>
-                    </Modal.Footer>
-                </form>
+                            Download CAD
+                        </button>
+
+                        <button
+                            type="button"
+                            value="+"
+                            className="btn btn-secondary left-11 rounded-sm"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const value =
+                                    needed === "" ? 0 : parseInt(needed);
+                                setNeeded(value + 1 + "");
+                            }}
+                        >
+                            Upload GCODE
+                        </button>
+                        <button
+                            type="button"
+                            value="+"
+                            className="btn btn-secondary left-11 rounded-sm"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const value =
+                                    needed === "" ? 0 : parseInt(needed);
+                                setNeeded(value + 1 + "");
+                            }}
+                        >
+                            Download GCODE
+                        </button>
+                    </div>
+                </Modal.Body>
+
+                <Modal.Footer className="bg-black">
+                    <Button
+                        variant="secondary"
+                        className="btn btn-danger absolute left-0"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            deletePart();
+                        }}
+                    >
+                        Delete
+                    </Button>
+
+                    <Button
+                        variant="secondary"
+                        className="btn btn-success"
+                        type="submit"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            savePart();
+                        }}
+                    >
+                        Save
+                    </Button>
+                </Modal.Footer>
             </Modal>
 
             <input

@@ -3,6 +3,7 @@ import { Part, Status } from "../Interfaces";
 type Props = {
     part: Part;
     setPopupPart: (part: Part) => void;
+    setShowPopup: (show: boolean) => void;
     setHotPart: (part: Part) => void;
 };
 
@@ -10,10 +11,12 @@ export default function TableRow({
     part,
     setPopupPart,
     setHotPart,
+    setShowPopup,
 }: Props): JSX.Element {
     const manage = (e: any) => {
         e.preventDefault();
         setPopupPart(part);
+        setShowPopup(true);
     };
 
     const complete = (e: any) => {

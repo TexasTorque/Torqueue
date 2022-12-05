@@ -1,6 +1,6 @@
 # Torqueue
 
-Full stack FERN app for managing the machine queue @TexasTorque. 
+Full stack FERN app for managing the part manufacturing queue @TexasTorque. 
 
 ## Contributors
 

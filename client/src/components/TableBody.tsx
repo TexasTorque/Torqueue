@@ -6,6 +6,7 @@ type Props = {
     completedPart: Part;
     searchQuery: string;
     filter: string;
+    setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
 };
@@ -16,6 +17,7 @@ export default function TableBody({
     searchQuery,
     filter,
     completedPart,
+    setShowPopup,
 }: Props) {
     let [parts, setParts] = useState<Part[]>([]);
     let includeCompleted = false;
@@ -72,6 +74,7 @@ export default function TableBody({
                             part={part}
                             setPopupPart={setPopupPart}
                             setHotPart={setHotPart}
+                            setShowPopup={setShowPopup}
                         />
                     );
                 })}

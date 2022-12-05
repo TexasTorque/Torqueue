@@ -9,6 +9,7 @@ import { Part } from "../Interfaces";
 import { v4 as uuid4 } from "uuid";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
+import torqueLogo from '../imgs/torqueLogo.svg';
 
 const defaultPart = {
     id: "",
@@ -31,6 +32,7 @@ export default function Dashboard() {
     });
 
     const [popupPart, setPopupPart] = useState<Part>(defaultPart);
+    const [showPopup, setShowPopup] = useState(false);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
     const [completedPart, setCompletedPart] = useState<Part>(defaultPart);
 
@@ -74,11 +76,21 @@ export default function Dashboard() {
         handleAsync();
     }, [hotPart]);
 
+    useEffect(() => {
+        const statusKeyboardInput = (e: any) => {
+            if (e.keyCode === 65) setShowPopup(true);
+        };
+
+        window.addEventListener("keydown", statusKeyboardInput);
+        return () => window.removeEventListener("keydown", statusKeyboardInput);
+    });
+
     const handleAddPart = (e: any) => {
         e.preventDefault();
         let newPart = defaultPart;
         newPart.id = uuid4();
-        setPopupPart(defaultPart);
+        setPopupPart(newPart);
+        setShowPopup(true);
     };
 
     return (
@@ -122,7 +134,6 @@ export default function Dashboard() {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
-
                 <h1
                     className="TextCenter TextCenterDiv"
                     style={{ position: "absolute", left: "45%", right: "50%" }}
@@ -134,8 +145,7 @@ export default function Dashboard() {
                     <input
                         type="text"
                         placeholder="Search"
-                        className="SearchBar BlackTextBox"
-                        style={{ margin: "1em" }}
+                        className="SearchBar BlackTextBox form-control relative right-2"
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
@@ -159,6 +169,7 @@ export default function Dashboard() {
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
                                     filter={filter}
+                                    setShowPopup={setShowPopup}
                                 />
                             </tbody>
                         </Table>
@@ -171,6 +182,8 @@ export default function Dashboard() {
                 setPopupPart={setPopupPart}
                 setHotPart={setHotPart}
                 defaultPart={defaultPart}
+                setShowPopup={setShowPopup}
+                showPopup={showPopup}
             />
 
             <button
