@@ -181,7 +181,6 @@ export default function Dashboard() {
                 popupPart={popupPart}
                 setPopupPart={setPopupPart}
                 setHotPart={setHotPart}
-                defaultPart={defaultPart}
                 setShowPopup={setShowPopup}
                 showPopup={showPopup}
             />

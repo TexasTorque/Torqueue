@@ -3,10 +3,10 @@ import { Modal, Button } from "react-bootstrap";
 import "../index.css";
 import { Part, Status } from "../Interfaces";
 import Dropdown from "react-bootstrap/Dropdown";
+import axios from "axios";
 
 type Props = {
     popupPart: Part;
-    defaultPart: Part;
     showPopup: boolean;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
@@ -16,8 +16,6 @@ type Props = {
 export default function ManagePopup({
     popupPart,
     setHotPart,
-    defaultPart,
-    setPopupPart,
     showPopup,
     setShowPopup,
 }: Props) {
@@ -38,7 +36,7 @@ export default function ManagePopup({
     const previousPriority = useRef("");
     const previousNotes = useRef("");
 
-    const [file, setFile] = useState("");
+    const [fileType, setUploadFileType] = useState(null);
     const partFile = useRef(null);
 
     useEffect(() => {
@@ -59,7 +57,7 @@ export default function ManagePopup({
         window.addEventListener("keydown", statusKeyboardInput);
         return () => window.removeEventListener("keydown", statusKeyboardInput);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [name, machine, status, needed, priority, material, notes]);
 
     useEffect(() => {
@@ -74,16 +72,65 @@ export default function ManagePopup({
         else setPopupName(`Edit ${popupPart.name}`);
     }, [popupPart]);
 
-    const handleFileUpload = (e: { target: { files: any } }) => {
+    const handleFileUpload = async (e: { target: { files: any } }) => {
         const { files } = e.target;
         if (files && files.length) {
-            const filename = files[0].name;
-            const parts = filename.split(".");
-            const fileType = parts[parts.length - 1];
-            console.log(files[0]); // ASK JAOCB ABOUT THIS
-            //setFile({ id: files[0], filetypes: fileType });
+            const formData = new FormData();
+            formData.append("partUpload", files[0]);
+            formData.append("fileId", popupPart.id);
+            formData.append("fileType", fileType);
+
+            axios({
+                method: "post",
+                url: process.env.REACT_APP_BACKEND_URL + "uploadPart",
+                data: formData,
+                headers: { "Content-Type": "multipart/form-data" },
+            });
         }
     };
+
+    const downloadFile = async (fileType: string) => {
+        let params = { fileId: popupPart.id, fileExt: "pdf", name: "test" };
+
+        let byteData = await axios.get(
+            process.env.REACT_APP_BACKEND_URL + "downloadPart",
+            {
+                params,
+            }
+        );
+
+        const data = byteData.data; // assume you have the data here
+        console.log(data);
+        //const arrayBuffer = base64ToArrayBuffer(data);
+        createAndDownloadBlobFile([data], "testName");
+    };
+
+    function base64ToArrayBuffer(base64: string) {
+        const binaryString = window.atob(base64); // Comment this if not using base64
+        const bytes = new Uint8Array(binaryString.length);
+        return bytes.map((byte, i) => binaryString.charCodeAt(i));
+    }
+
+    function createAndDownloadBlobFile(
+        body: any,
+        filename: any,
+        extension = "pdf"
+    ) {
+        const blob = new Blob([body]);
+        const fileName = `${filename}.${extension}`;
+
+        const link = document.createElement("a");
+        // Browsers that support HTML5 download attribute
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", fileName);
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
 
     const savePart = () => {
         setHotPart({
@@ -324,9 +371,11 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
+                                setUploadFileType("cad");
                                 if (partFile.current !== null) {
                                     partFile.current["click"]();
                                 }
+                                setUploadFileType("cad");
                             }}
                         >
                             Upload CAD
@@ -337,9 +386,7 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                const value =
-                                    needed === "" ? 0 : parseInt(needed);
-                                setNeeded(value + 1 + "");
+                                downloadFile("cad");
                             }}
                         >
                             Download CAD
@@ -351,9 +398,11 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                const value =
-                                    needed === "" ? 0 : parseInt(needed);
-                                setNeeded(value + 1 + "");
+                                setUploadFileType("cad");
+                                if (partFile.current !== null) {
+                                    partFile.current["click"]();
+                                }
+                                setUploadFileType("cam");
                             }}
                         >
                             Upload GCODE
@@ -364,9 +413,7 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                const value =
-                                    needed === "" ? 0 : parseInt(needed);
-                                setNeeded(value + 1 + "");
+                                downloadFile("cam");
                             }}
                         >
                             Download GCODE
