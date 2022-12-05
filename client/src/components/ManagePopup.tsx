@@ -82,7 +82,7 @@ export default function ManagePopup({
 
             axios({
                 method: "post",
-                url: process.env.REACT_APP_BACKEND_URL + "uploadPart",
+                url: "https://torqueue.texastorque.org/uploadPart",
                 data: formData,
                 headers: { "Content-Type": "multipart/form-data" },
             });
@@ -93,7 +93,7 @@ export default function ManagePopup({
         let params = { fileId: popupPart.id, fileExt: "pdf", name: "test" };
 
         let byteData = await axios.get(
-            process.env.REACT_APP_BACKEND_URL + "downloadPart",
+            "https://torqueue.texastorque.org/downloadPart",
             {
                 params,
             }

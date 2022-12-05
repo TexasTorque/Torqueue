@@ -30,7 +30,7 @@ export default function TableBody({
     const getAllParts = async () => {
         let responseJSON: any;
         let listParts = [] as Part[];
-        await fetch(process.env.REACT_APP_BACKEND_URL + "getAllParts").then(
+        await fetch("https://torqueue.texastorque.org/getAllParts").then(
             (response) =>
                 response.json().then((data) => {
                     responseJSON = data[1].active;

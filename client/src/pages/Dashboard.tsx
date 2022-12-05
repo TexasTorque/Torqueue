@@ -44,7 +44,7 @@ export default function Dashboard() {
             if (hotPart.id === "") return;
 
             const request = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}editPart`,
+                `https://torqueue.texastorque.org/editPart`,
                 {
                     hotPart,
                 }
