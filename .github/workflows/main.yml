@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  clone:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+  
+  build-client:
+    needs: [clone]
+    runs-on: self-hosted
+    steps:
+      - name: Install packages
+        run: |
+          cd client
+          npm ci
+
+      - name: Build
+        run: npm run build
+        
+      - name: Copy to server directory
+        run: |
+            cd ..
+            mv client/build backend/
+    
+  build-server:
+    needs: [clone]
+    runs-on: self-hosted
+    steps:
+      - name: Install packages
+        run: |
+          cd backend
+          npm ci    
+      
+  restart:
+    if: always()
+    needs: [build-client, build-server]
+    runs-on: self-hosted
+    
+    steps:
+      - name: Restart server
+        run: sudo systemctl restart torqueue
