@@ -1,23 +1,24 @@
 import express, { json, urlencoded } from "express";
-import cors from "cors";
-import { getAllParts, editPart, uploadFile, getFileDownloadURL} from "./apiController";
+import {
+    getAllParts,
+    editPart,
+    uploadFile,
+    getFileDownloadURL,
+} from "./apiController";
 import multer from "multer";
+import path from "path";
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(
-    cors({
-        origin: "*",
-    })
-);
 
 const storage = multer.memoryStorage();
-const upload = multer({ 
+const upload = multer({
     storage: storage,
-    limits: { files: 1, fileSize: 10 * 1024 * 1024 } 
+    limits: { files: 1, fileSize: 10 * 1024 * 1024 },
 });
 
+app.use("/", express.static(path.join(__dirname, "./build")));
 
 app.use(json());
 app.use(urlencoded({ extended: false }));

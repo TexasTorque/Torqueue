@@ -9,7 +9,7 @@ import { Part } from "../Interfaces";
 import { v4 as uuid4 } from "uuid";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
-import torqueLogo from '../imgs/torqueLogo.svg';
+import torqueLogo from "../imgs/torqueLogo.jpg";
 
 const defaultPart = {
     id: "",
@@ -134,6 +134,12 @@ export default function Dashboard() {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
+                <img
+                    src={torqueLogo}
+                    alt="TorqueLogo"
+                    className="h-10 Textenter TextCenterDiv"
+                    style={{ position: "absolute", left: "42%", right: "50%" }}
+                ></img>
                 <h1
                     className="TextCenter TextCenterDiv"
                     style={{ position: "absolute", left: "45%", right: "50%" }}

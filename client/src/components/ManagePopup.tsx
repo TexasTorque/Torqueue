@@ -102,7 +102,7 @@ export default function ManagePopup({
         const data = byteData.data; // assume you have the data here
         console.log(data);
         //const arrayBuffer = base64ToArrayBuffer(data);
-        createAndDownloadBlobFile([data], "testName");
+        createAndDownloadBlobFile(data, "testName");
     };
 
     function base64ToArrayBuffer(base64: string) {
