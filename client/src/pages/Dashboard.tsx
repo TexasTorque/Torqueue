@@ -25,6 +25,9 @@ const defaultPart = {
 };
 
 export default function Dashboard() {
+    //const BACKEND_URL = "https://torqueue.texastorque.org";
+    const BACKEND_URL = "http://localhost:5738";
+
     const [alert, setAlert] = useState({
         show: false,
         message: "",
@@ -44,15 +47,15 @@ export default function Dashboard() {
             if (hotPart.id === "") return;
 
             const request = await axios.post(
-                `https://torqueue.texastorque.org/editPart`,
+                `${BACKEND_URL}/editPart`,
                 {
                     hotPart,
                 }
             );
 
             const message = hotPart.dev.delete
-                ? "Successfully deleted part"
-                : "Successfully modified " + hotPart.name + "!";
+                ? "Part Successfully Deleted"
+                : "Successfully Modified " + hotPart.name + "!";
 
             if (request.data === "success") {
                 setAlert({
@@ -171,6 +174,7 @@ export default function Dashboard() {
                                     searchQuery={searchQuery}
                                     filter={filter}
                                     setShowPopup={setShowPopup}
+                                    BACKEND_URL={BACKEND_URL}
                                 />
                             </tbody>
                         </Table>
@@ -184,6 +188,8 @@ export default function Dashboard() {
                 setHotPart={setHotPart}
                 setShowPopup={setShowPopup}
                 showPopup={showPopup}
+                setAlert={setAlert}
+                BACKEND_URL={BACKEND_URL}
             />
 
             <button

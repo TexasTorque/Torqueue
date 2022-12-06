@@ -8,9 +8,11 @@ import axios from "axios";
 type Props = {
     popupPart: Part;
     showPopup: boolean;
+    BACKEND_URL: string;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
+    setAlert: (params: any) => void;
 };
 
 export default function ManagePopup({
@@ -18,6 +20,8 @@ export default function ManagePopup({
     setHotPart,
     showPopup,
     setShowPopup,
+    setAlert,
+    BACKEND_URL,
 }: Props) {
     const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
@@ -78,43 +82,45 @@ export default function ManagePopup({
         if (files && files.length) {
             const formData = new FormData();
 
-            console.log(formData.toString());
-            console.log(files[0]);
             formData.append("fileId", popupPart.id);
             formData.append("fileType", uploadFileType);
             formData.append("partUpload", files[0]);
 
-            await axios({
+            const request = await axios({
                 method: "POST",
-                url: "http://localhost:5738/uploadPart",
+                url:`${BACKEND_URL}/uploadPart`,
                 headers: { "Content-Type": "multipart/form-data" },
                 data: formData,
-            }).then(() => {
-                console.log("part uploaded");
             });
 
-            //axios
-            //    .post("http://localhost:5738/uploadPart", formData, {
-            //        headers: {
-            //            "Content-Type": "multipart/form-data",
-            //        },
-            //    })
-            //    .then(() => {
-            //        console.log("part uploaded");
-            //    });
+            if (request.data === "success") {
+                setAlert({
+                    show: true,
+                    message: "File Successfully Uploaded",
+                    success: true,
+                });
+
+                setTimeout(() => {
+                    setAlert({
+                        show: false,
+                        message: "",
+                        success: false,
+                    });
+                }, 2000);
+            }
         }
     };
 
     const handleFileDownload = async (fileType: string) => {
-        let fileExtension = fileType === "cad" ? "pdf" : "pdf";
+        let fileExtension = fileType === "cad" ? "cad" : "cam";
         let params = {
             fileId: popupPart.id,
             fileExt: fileExtension,
-            name: `${popupPart.name} ${fileType === "cad" ? "cad" : "cam"}`,
+            name: `${popupPart.name}-${fileType === "cad" ? "CAD" : "GCODE"}`,
         };
 
         axios({
-            url: "http://localhost:5738/downloadPart",
+            url: `${BACKEND_URL}/downloadPart`,
             method: "GET",
             responseType: "blob",
             params: params,
@@ -126,37 +132,7 @@ export default function ManagePopup({
             document.body.appendChild(link);
             link.click();
         });
-
-        //const arrayBuffer = base64ToArrayBuffer(data);
-        //createAndDownloadBlobFile(data, "testName");
     };
-
-    //function base64ToArrayBuffer(base64: string) {
-    //    const binaryString = window.atob(base64); // Comment this if not using base64
-    //    const bytes = new Uint8Array(binaryString.length);
-    //    return bytes.map((byte, i) => binaryString.charCodeAt(i));
-    //}
-    //
-    //    function createAndDownloadBlobFile(
-    //        body: any,
-    //        filename: any,
-    //        extension = "pdf"
-    //    ) {
-    //        const blob = new Blob([body]);
-    //        const fileName = `${filename}.${extension}`;
-    //
-    //        const link = document.createElement("a");
-    //        // Browsers that support HTML5 download attribute
-    //        if (link.download !== undefined) {
-    //            const url = URL.createObjectURL(blob);
-    //            link.setAttribute("href", url);
-    //            link.setAttribute("download", fileName);
-    //            link.style.visibility = "hidden";
-    //            document.body.appendChild(link);
-    //            link.click();
-    //            document.body.removeChild(link);
-    //        }
-    //    }
 
     const savePart = () => {
         setHotPart({
