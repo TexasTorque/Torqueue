@@ -18,7 +18,7 @@ const upload = multer({
     limits: { files: 1, fileSize: 10 * 1024 * 1024 },
 });
 
-app.use("/", express.static(path.join(__dirname, "./build")));
+//app.use("/", express.static(path.join(__dirname, "./build")));
 
 app.use(json());
 app.use(urlencoded({ extended: false }));

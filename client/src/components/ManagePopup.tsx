@@ -19,7 +19,7 @@ export default function ManagePopup({
     showPopup,
     setShowPopup,
 }: Props) {
-    let [name, setName] = useState(popupPart.name);
+    const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
     const [material, setMaterial] = useState(popupPart.machine);
     let [status, setStatus] = useState(popupPart.status);
@@ -36,8 +36,9 @@ export default function ManagePopup({
     const previousPriority = useRef("");
     const previousNotes = useRef("");
 
-    const [fileType, setUploadFileType] = useState(null);
-    const partFile = useRef(null);
+    const [uploadFileType, setUploadFileType] = useState("cad");
+
+    const openFileSelector = useRef(null);
 
     useEffect(() => {
         previousName.current = name;
@@ -78,7 +79,7 @@ export default function ManagePopup({
             const formData = new FormData();
             formData.append("partUpload", files[0]);
             formData.append("fileId", popupPart.id);
-            formData.append("fileType", fileType);
+            formData.append("fileType", uploadFileType);
 
             axios({
                 method: "post",
@@ -89,8 +90,16 @@ export default function ManagePopup({
         }
     };
 
-    const downloadFile = async (fileType: string) => {
-        let params = { fileId: popupPart.id, fileExt: "pdf", name: "test" };
+    const handleFileDownload = async (fileType: string) => {
+        let fileExtension =
+            fileType === "cad"
+                ? popupPart.files.cadExt
+                : popupPart.files.camExt;
+        let params = {
+            fileId: popupPart.id,
+            fileExt: fileExtension,
+            name: `${popupPart.name} ${fileType === "cad" ? "CAD" : "GCODE"}`,
+        };
 
         let byteData = await axios.get(
             "https://torqueue.texastorque.org/downloadPart",
@@ -99,7 +108,7 @@ export default function ManagePopup({
             }
         );
 
-        const data = byteData.data; // assume you have the data here
+        const data = byteData.data;
         console.log(data);
         //const arrayBuffer = base64ToArrayBuffer(data);
         //createAndDownloadBlobFile(data, "testName");
@@ -110,27 +119,27 @@ export default function ManagePopup({
     //    const bytes = new Uint8Array(binaryString.length);
     //    return bytes.map((byte, i) => binaryString.charCodeAt(i));
     //}
-//
-//    function createAndDownloadBlobFile(
-//        body: any,
-//        filename: any,
-//        extension = "pdf"
-//    ) {
-//        const blob = new Blob([body]);
-//        const fileName = `${filename}.${extension}`;
-//
-//        const link = document.createElement("a");
-//        // Browsers that support HTML5 download attribute
-//        if (link.download !== undefined) {
-//            const url = URL.createObjectURL(blob);
-//            link.setAttribute("href", url);
-//            link.setAttribute("download", fileName);
-//            link.style.visibility = "hidden";
-//            document.body.appendChild(link);
-//            link.click();
-//            document.body.removeChild(link);
-//        }
-//    }
+    //
+    //    function createAndDownloadBlobFile(
+    //        body: any,
+    //        filename: any,
+    //        extension = "pdf"
+    //    ) {
+    //        const blob = new Blob([body]);
+    //        const fileName = `${filename}.${extension}`;
+    //
+    //        const link = document.createElement("a");
+    //        // Browsers that support HTML5 download attribute
+    //        if (link.download !== undefined) {
+    //            const url = URL.createObjectURL(blob);
+    //            link.setAttribute("href", url);
+    //            link.setAttribute("download", fileName);
+    //            link.style.visibility = "hidden";
+    //            document.body.appendChild(link);
+    //            link.click();
+    //            document.body.removeChild(link);
+    //        }
+    //    }
 
     const savePart = () => {
         setHotPart({
@@ -372,10 +381,9 @@ export default function ManagePopup({
                             onClick={(e) => {
                                 e.preventDefault();
                                 setUploadFileType("cad");
-                                if (partFile.current !== null) {
-                                    partFile.current["click"]();
+                                if (openFileSelector.current !== null) {
+                                    openFileSelector.current["click"]();
                                 }
-                                setUploadFileType("cad");
                             }}
                         >
                             Upload CAD
@@ -386,7 +394,7 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                downloadFile("cad");
+                                handleFileDownload("cad");
                             }}
                         >
                             Download CAD
@@ -398,11 +406,10 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setUploadFileType("cad");
-                                if (partFile.current !== null) {
-                                    partFile.current["click"]();
-                                }
                                 setUploadFileType("cam");
+                                if (openFileSelector.current !== null) {
+                                    openFileSelector.current["click"]();
+                                }
                             }}
                         >
                             Upload GCODE
@@ -413,7 +420,7 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                downloadFile("cam");
+                                handleFileDownload("cam");
                             }}
                         >
                             Download GCODE
@@ -449,7 +456,7 @@ export default function ManagePopup({
 
             <input
                 style={{ display: "none" }}
-                ref={partFile}
+                ref={openFileSelector}
                 onChange={handleFileUpload}
                 type="file"
             />
