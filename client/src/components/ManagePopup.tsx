@@ -77,39 +77,56 @@ export default function ManagePopup({
         const { files } = e.target;
         if (files && files.length) {
             const formData = new FormData();
-            formData.append("partUpload", files[0]);
+
+            console.log(formData.toString());
+            console.log(files[0]);
             formData.append("fileId", popupPart.id);
             formData.append("fileType", uploadFileType);
+            formData.append("partUpload", files[0]);
 
-            axios({
-                method: "post",
-                url: "https://torqueue.texastorque.org/uploadPart",
-                data: formData,
+            await axios({
+                method: "POST",
+                url: "http://localhost:5738/uploadPart",
                 headers: { "Content-Type": "multipart/form-data" },
+                data: formData,
+            }).then(() => {
+                console.log("part uploaded");
             });
+
+            //axios
+            //    .post("http://localhost:5738/uploadPart", formData, {
+            //        headers: {
+            //            "Content-Type": "multipart/form-data",
+            //        },
+            //    })
+            //    .then(() => {
+            //        console.log("part uploaded");
+            //    });
         }
     };
 
     const handleFileDownload = async (fileType: string) => {
-        let fileExtension =
-            fileType === "cad"
-                ? popupPart.files.cadExt
-                : popupPart.files.camExt;
+        let fileExtension = fileType === "cad" ? "pdf" : "pdf";
         let params = {
             fileId: popupPart.id,
             fileExt: fileExtension,
-            name: `${popupPart.name} ${fileType === "cad" ? "CAD" : "GCODE"}`,
+            name: `${popupPart.name} ${fileType === "cad" ? "cad" : "cam"}`,
         };
 
-        let byteData = await axios.get(
-            "https://torqueue.texastorque.org/downloadPart",
-            {
-                params,
-            }
-        );
+        axios({
+            url: "http://localhost:5738/downloadPart",
+            method: "GET",
+            responseType: "blob",
+            params: params,
+        }).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `${popupPart.name} ${fileType}`);
+            document.body.appendChild(link);
+            link.click();
+        });
 
-        const data = byteData.data;
-        console.log(data);
         //const arrayBuffer = base64ToArrayBuffer(data);
         //createAndDownloadBlobFile(data, "testName");
     };

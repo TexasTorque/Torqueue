@@ -7,15 +7,20 @@ import {
 } from "./apiController";
 import multer from "multer";
 import path from "path";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5738;
 
+app.use(
+    cors({
+        origin: "*",
+    })
+);
 
 const storage = multer.memoryStorage();
 const upload = multer({
-    storage: storage,
-    limits: { files: 1, fileSize: 10 * 1024 * 1024 },
+    storage: storage
 });
 
 //app.use("/", express.static(path.join(__dirname, "./build")));

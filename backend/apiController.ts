@@ -13,11 +13,16 @@ export const editPart = asyncHandler(async (req, res) => {
 });
 
 export const uploadFile = asyncHandler(async (req, res) => {
-    if (!req.body.file) return;
-    let partFile = req.body.file || null;
+    console.log(req.file);
+    if (!req.file) return;
+    
+    let partFile = req.file || null;
     let fileId = req.body.fileId;
     let fileType = req.body.fileType;
-    uploadPartFirebase(partFile, fileId, fileType);
+    console.log("ooga booga");
+
+    await uploadPartFirebase(partFile, fileId, fileType);
+    console.log("booga");
     res.send("Upload");
 });
 
@@ -33,8 +38,8 @@ export const getFileDownloadURL = asyncHandler(async (req, res) => {
     }
 
     res.writeHead(200, {
-        "Content-Type": "application/octet-stream",
-        "Content-disposition": `attachment;filename=${req.query.name}.${req.query.fileExt}`,
+        "Content-Type": "application/pdf",
+        "content-disposition": `attachment`,
         "Content-Length": buf.byteLength,
     });
 

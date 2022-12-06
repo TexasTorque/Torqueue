@@ -30,7 +30,7 @@ export default function TableBody({
     const getAllParts = async () => {
         let responseJSON: any;
         let listParts = [] as Part[];
-        await fetch("https://torqueue.texastorque.org/getAllParts").then(
+        await fetch("http://localhost:5738/getAllParts").then(
             (response) =>
                 response.json().then((data) => {
                     responseJSON = data[1].active;
