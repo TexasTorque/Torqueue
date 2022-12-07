@@ -32,13 +32,10 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-    //const BACKEND_URL = "https://torqueue.texastorque.org";
-    const BACKEND_URL = "http://localhost:5738";
-    let partsList = [defaultPart];
+    const BACKEND_URL = "https://torqueue.texastorque.org";
+    //const BACKEND_URL = "http://localhost:5738";
 
     initializeApp(firebaseConfig);
-    const db = getDatabase();
-    const dbRef = ref(db, "/");
 
     const [alert, setAlert] = useState({
         show: false,
@@ -55,21 +52,27 @@ export default function Dashboard() {
     const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
 
-    onValue(dbRef, async (snapshot) => {
-        console.log("Pulling Parts");
-        partsList = [];
-        snapshot.forEach((childSnapshot) => {
-            partsList.push(childSnapshot.val());
+    useEffect(() => {
+        const db = getDatabase();
+        const dbRef = ref(db, "/");
+        onValue(dbRef, async () => {
+            let responseJSON: any;
+            let listParts = [] as Part[];
+            await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
+                response.json().then((data) => {
+                    responseJSON = data[1];
+                })
+            );
+
+            for (let part in responseJSON) listParts.push(responseJSON[part]);
+
+            listParts.sort((a, b) => {
+                return numberSortArray(a.priority, b.priority);
+            });
+
+            setParts(listParts);
         });
-
-        partsList.sort((a, b) => {
-            return numberSortArray(a.priority, b.priority);
-        });
-
-//        setParts(partsList);
-
-        console.log(parts);
-    });
+    }, []);
 
     useEffect(() => {
         const handleAsync = async () => {
