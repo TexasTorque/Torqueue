@@ -73,14 +73,22 @@ export default function ManagePopup({
         setPriority(popupPart.priority);
         setMaterial(popupPart.material);
         setNotes(popupPart.notes);
-        if (popupPart.name === "") setPopupName("Add a new part");
+        if (popupPart.name === "") setPopupName("Add A New Part");
         else setPopupName(`Edit ${popupPart.name}`);
     }, [popupPart]);
 
     const handleFileUpload = async (e: { target: { files: any } }) => {
         const { files } = e.target;
         if (files && files.length) {
+            const parts = files[0].name.split(".");
+            const fileUploadExtension = parts[parts.length - 1];
+
+            if (uploadFileType === "cad") popupPart.files.cadExt = fileUploadExtension;
+            else popupPart.files.camExt = fileUploadExtension;
+
+            
             const formData = new FormData();
+
 
             formData.append("fileId", popupPart.id);
             formData.append("fileType", uploadFileType);
@@ -128,7 +136,7 @@ export default function ManagePopup({
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `${popupPart.name} ${fileType}`);
+            link.setAttribute("download", `${popupPart.name}-${fileType}.${fileType === "cad" ? popupPart.files.cadExt :  popupPart.files.camExt}`);
             document.body.appendChild(link);
             link.click();
         });
