@@ -10,6 +10,9 @@ import { v4 as uuid4 } from "uuid";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
 import torqueueLogo from "../imgs/torqueueLogo.png";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { firebaseConfig } from "../keys";
 
 const defaultPart = {
     id: "",
@@ -24,9 +27,18 @@ const defaultPart = {
     dev: { delete: false, upload: false, download: false },
 };
 
+const numberSortArray = (a: any, b: any) => {
+    return a > b ? 1 : a < b ? -1 : 0;
+};
+
 export default function Dashboard() {
     //const BACKEND_URL = "https://torqueue.texastorque.org";
     const BACKEND_URL = "http://localhost:5738";
+    let partsList = [defaultPart];
+
+    initializeApp(firebaseConfig);
+    const db = getDatabase();
+    const dbRef = ref(db, "/");
 
     const [alert, setAlert] = useState({
         show: false,
@@ -38,20 +50,34 @@ export default function Dashboard() {
     const [showPopup, setShowPopup] = useState(false);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
     const [completedPart, setCompletedPart] = useState<Part>(defaultPart);
+    const [parts, setParts] = useState<Part[]>(null);
 
     const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
+
+    onValue(dbRef, async (snapshot) => {
+        console.log("Pulling Parts");
+        partsList = [];
+        snapshot.forEach((childSnapshot) => {
+            partsList.push(childSnapshot.val());
+        });
+
+        partsList.sort((a, b) => {
+            return numberSortArray(a.priority, b.priority);
+        });
+
+//        setParts(partsList);
+
+        console.log(parts);
+    });
 
     useEffect(() => {
         const handleAsync = async () => {
             if (hotPart.id === "") return;
 
-            const request = await axios.post(
-                `${BACKEND_URL}/editPart`,
-                {
-                    hotPart,
-                }
-            );
+            const request = await axios.post(`${BACKEND_URL}/editPart`, {
+                hotPart,
+            });
 
             const message = hotPart.dev.delete
                 ? "Part Successfully Deleted"
@@ -140,10 +166,9 @@ export default function Dashboard() {
                 <img
                     src={torqueueLogo}
                     alt="TorqueueLogo"
-                    className="h-10 Textenter TextCenterDiv"
-                    style={{ position: "absolute", left: "43.5%", right: "50%" }}
+                    className="h-12 Textenter TextCenterDiv"
+                    style={{ position: "absolute", left: "43%", right: "50%" }}
                 ></img>
-               
 
                 <div style={{ marginLeft: "auto" }}>
                     <input
@@ -175,6 +200,7 @@ export default function Dashboard() {
                                     filter={filter}
                                     setShowPopup={setShowPopup}
                                     BACKEND_URL={BACKEND_URL}
+                                    parts={parts}
                                 />
                             </tbody>
                         </Table>

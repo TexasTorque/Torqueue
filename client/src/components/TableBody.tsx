@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
 import PartRow from "./PartRow";
 import { Part } from "../Interfaces";
+import { useEffect } from "react";
 
 type Props = {
     completedPart: Part;
     searchQuery: string;
     filter: string;
     BACKEND_URL: string;
+    parts: Part[];
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -17,39 +18,35 @@ export default function TableBody({
     setHotPart,
     searchQuery,
     filter,
-    completedPart,
     setShowPopup,
-    BACKEND_URL,
+    parts,
 }: Props) {
-    let [parts, setParts] = useState<Part[]>([]);
     let includeCompleted = false;
 
-    useEffect(() => {
-        getAllParts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [completedPart]);
+    //useEffect(() => {console.log("Update")}, [parts]);
 
-    const getAllParts = async () => {
-        let responseJSON: any;
-        let listParts = [] as Part[];
-        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
-            response.json().then((data) => {
-                responseJSON = data[1];
-            })
-        );
+    //useEffect(() => {
+    //    getAllParts();
+    //    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //}, [completedPart]);
 
-        for (let part in responseJSON) listParts.push(responseJSON[part]);
-
-        listParts.sort((a, b) => {
-            return numberSortArray(a.priority, b.priority);
-        });
-
-        setParts(listParts);
-    };
-
-    const numberSortArray = (a: any, b: any) => {
-        return a > b ? 1 : a < b ? -1 : 0;
-    };
+    //    const getAllParts = async () => {
+    //        let responseJSON: any;
+    //        let listParts = [] as Part[];
+    //        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
+    //            response.json().then((data) => {
+    //                responseJSON = data[1];
+    //            })
+    //        );
+    //
+    //        for (let part in responseJSON) listParts.push(responseJSON[part]);
+    //
+    //        listParts.sort((a, b) => {
+    //            return numberSortArray(a.priority, b.priority);
+    //        });
+    //
+    //        setParts(listParts);
+    //    };
 
     if (filter === "All machines" || filter === "Select a filter") {
         includeCompleted = false;
@@ -58,7 +55,11 @@ export default function TableBody({
         filter = "";
         includeCompleted = true;
     }
-    return (
+    return parts === null ? (
+        <tr>
+            <td>Loading...</td>
+        </tr>
+    ) :(
         <>
             {parts
                 .filter((part) =>
