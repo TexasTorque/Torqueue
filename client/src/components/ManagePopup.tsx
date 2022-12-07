@@ -44,7 +44,9 @@ export default function ManagePopup({
 
     const openFileSelector = useRef(null);
 
-    let fileUploadExtension = "";
+    let fileUploadExtension = "",
+        overRideCAD = false,
+        overRideCAM = false;
 
     useEffect(() => {
         previousName.current = name;
@@ -123,6 +125,32 @@ export default function ManagePopup({
                 savePart();
             }
         }
+    };
+
+    const handleOpenFileSelector = (selectedFileType: string) => {
+        if (
+            selectedFileType === "cad" &&
+            popupPart.files.cadExt !== "" &&
+            !overRideCAD
+        ) {
+            alert(
+                "This Part Already Has A CAD File. Upload A New File To Override The Current One."
+            );
+            overRideCAD = true;
+            return;
+        } else if (
+            selectedFileType === "cam" &&
+            popupPart.files.camExt !== "" &&
+            !overRideCAM
+        ) {
+            alert(
+                "This Part Already Has A CAM File. Upload A New File To Override The Current One."
+            );
+            overRideCAM = true;
+            return;
+        }
+
+        openFileSelector.current["click"]();
     };
 
     const handleFileDownload = async (fileType: string) => {
@@ -393,9 +421,9 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setUploadFileType("cad");
                                 if (openFileSelector.current !== null) {
-                                    openFileSelector.current["click"]();
+                                    setUploadFileType("cad");
+                                    handleOpenFileSelector("cad");
                                 }
                             }}
                         >
@@ -419,9 +447,9 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setUploadFileType("cam");
                                 if (openFileSelector.current !== null) {
-                                    openFileSelector.current["click"]();
+                                    setUploadFileType("cam");
+                                    handleOpenFileSelector("cam");
                                 }
                             }}
                         >

@@ -44,7 +44,6 @@ export default function TableBody({
             return numberSortArray(a.priority, b.priority);
         });
 
-        console.log(listParts);
         setParts(listParts);
     };
 
