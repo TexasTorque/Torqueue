@@ -6,6 +6,7 @@ type Props = {
     completedPart: Part;
     searchQuery: string;
     filter: string;
+    BACKEND_URL: string;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -18,6 +19,7 @@ export default function TableBody({
     filter,
     completedPart,
     setShowPopup,
+    BACKEND_URL,
 }: Props) {
     let [parts, setParts] = useState<Part[]>([]);
     let includeCompleted = false;
@@ -30,11 +32,10 @@ export default function TableBody({
     const getAllParts = async () => {
         let responseJSON: any;
         let listParts = [] as Part[];
-        await fetch("https://torqueue.texastorque.org/getAllParts").then(
-            (response) =>
-                response.json().then((data) => {
-                    responseJSON = data[1].active;
-                })
+        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
+            response.json().then((data) => {
+                responseJSON = data[1];
+            })
         );
 
         for (let part in responseJSON) listParts.push(responseJSON[part]);

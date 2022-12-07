@@ -9,7 +9,7 @@ import { Part } from "../Interfaces";
 import { v4 as uuid4 } from "uuid";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
-import torqueLogo from "../imgs/torqueLogo.jpg";
+import torqueueLogo from "../imgs/torqueueLogo.png";
 
 const defaultPart = {
     id: "",
@@ -18,13 +18,16 @@ const defaultPart = {
     machine: "",
     material: "",
     needed: "0",
-    priority: "0",
+    priority: "5",
     notes: "",
     files: { camExt: "", cadExt: "" },
     dev: { delete: false, upload: false, download: false },
 };
 
 export default function Dashboard() {
+    //const BACKEND_URL = "https://torqueue.texastorque.org";
+    const BACKEND_URL = "http://localhost:5738";
+
     const [alert, setAlert] = useState({
         show: false,
         message: "",
@@ -44,15 +47,15 @@ export default function Dashboard() {
             if (hotPart.id === "") return;
 
             const request = await axios.post(
-                `https://torqueue.texastorque.org/editPart`,
+                `${BACKEND_URL}/editPart`,
                 {
                     hotPart,
                 }
             );
 
             const message = hotPart.dev.delete
-                ? "Successfully deleted part"
-                : "Successfully modified " + hotPart.name + "!";
+                ? "Part Successfully Deleted"
+                : "Successfully Modified " + hotPart.name + "!";
 
             if (request.data === "success") {
                 setAlert({
@@ -135,17 +138,12 @@ export default function Dashboard() {
                     </Dropdown.Menu>
                 </Dropdown>
                 <img
-                    src={torqueLogo}
-                    alt="TorqueLogo"
+                    src={torqueueLogo}
+                    alt="TorqueueLogo"
                     className="h-10 Textenter TextCenterDiv"
-                    style={{ position: "absolute", left: "42%", right: "50%" }}
+                    style={{ position: "absolute", left: "43.5%", right: "50%" }}
                 ></img>
-                <h1
-                    className="TextCenter TextCenterDiv"
-                    style={{ position: "absolute", left: "45%", right: "50%" }}
-                >
-                    Torqueue
-                </h1>
+               
 
                 <div style={{ marginLeft: "auto" }}>
                     <input
@@ -176,6 +174,7 @@ export default function Dashboard() {
                                     searchQuery={searchQuery}
                                     filter={filter}
                                     setShowPopup={setShowPopup}
+                                    BACKEND_URL={BACKEND_URL}
                                 />
                             </tbody>
                         </Table>
@@ -189,6 +188,8 @@ export default function Dashboard() {
                 setHotPart={setHotPart}
                 setShowPopup={setShowPopup}
                 showPopup={showPopup}
+                setAlert={setAlert}
+                BACKEND_URL={BACKEND_URL}
             />
 
             <button

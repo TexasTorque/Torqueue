@@ -8,9 +8,11 @@ import axios from "axios";
 type Props = {
     popupPart: Part;
     showPopup: boolean;
+    BACKEND_URL: string;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
+    setAlert: (params: any) => void;
 };
 
 export default function ManagePopup({
@@ -18,8 +20,10 @@ export default function ManagePopup({
     setHotPart,
     showPopup,
     setShowPopup,
+    setAlert,
+    BACKEND_URL,
 }: Props) {
-    let [name, setName] = useState(popupPart.name);
+    const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
     const [material, setMaterial] = useState(popupPart.machine);
     let [status, setStatus] = useState(popupPart.status);
@@ -33,11 +37,16 @@ export default function ManagePopup({
     const previousMaterial = useRef("");
     const previousStatus = useRef(0);
     const previousNeeded = useRef("");
-    const previousPriority = useRef("");
+    const previousPriority = useRef("1");
     const previousNotes = useRef("");
 
-    const [fileType, setUploadFileType] = useState(null);
-    const partFile = useRef(null);
+    const [uploadFileType, setUploadFileType] = useState("cad");
+
+    const openFileSelector = useRef(null);
+
+    let fileUploadExtension = "",
+        overRideCAD = false,
+        overRideCAM = false;
 
     useEffect(() => {
         previousName.current = name;
@@ -51,7 +60,10 @@ export default function ManagePopup({
         const statusKeyboardInput = (e: any) => {
             if (e.keyCode === 39) setStatus(++status);
             else if (e.keyCode === 37) setStatus(--status);
-            else if (e.keyCode === 13) savePart();
+            else if (e.keyCode === 13) {
+                savePart();
+                setShowPopup(false);
+            }
         };
 
         window.addEventListener("keydown", statusKeyboardInput);
@@ -68,87 +80,125 @@ export default function ManagePopup({
         setPriority(popupPart.priority);
         setMaterial(popupPart.material);
         setNotes(popupPart.notes);
-        if (popupPart.name === "") setPopupName("Add a new part");
+        if (popupPart.name === "") setPopupName("Add A New Part");
         else setPopupName(`Edit ${popupPart.name}`);
     }, [popupPart]);
 
     const handleFileUpload = async (e: { target: { files: any } }) => {
         const { files } = e.target;
         if (files && files.length) {
-            const formData = new FormData();
-            formData.append("partUpload", files[0]);
-            formData.append("fileId", popupPart.id);
-            formData.append("fileType", fileType);
+            const parts = files[0].name.split(".");
+            fileUploadExtension = parts[parts.length - 1];
 
-            axios({
-                method: "post",
-                url: "https://torqueue.texastorque.org/uploadPart",
-                data: formData,
+            if (uploadFileType === "cad")
+                popupPart.files.cadExt = fileUploadExtension;
+            else popupPart.files.camExt = fileUploadExtension;
+
+            const formData = new FormData();
+
+            formData.append("fileId", popupPart.id);
+            formData.append("fileType", uploadFileType);
+            formData.append("partUpload", files[0]);
+
+            const request = await axios({
+                method: "POST",
+                url: `${BACKEND_URL}/uploadPart`,
                 headers: { "Content-Type": "multipart/form-data" },
+                data: formData,
             });
+
+            if (request.data === "success") {
+                setAlert({
+                    show: true,
+                    message: "File Successfully Uploaded",
+                    success: true,
+                });
+
+                setTimeout(() => {
+                    setAlert({
+                        show: false,
+                        message: "",
+                        success: false,
+                    });
+                }, 2000);
+
+                savePart();
+            }
         }
     };
 
-    const downloadFile = async (fileType: string) => {
-        let params = { fileId: popupPart.id, fileExt: "pdf", name: "test" };
+    const handleOpenFileSelector = (selectedFileType: string) => {
+        if (
+            selectedFileType === "cad" &&
+            popupPart.files.cadExt !== "" &&
+            !overRideCAD
+        ) {
+            alert(
+                "This Part Already Has A CAD File. Upload A New File To Override The Current One."
+            );
+            overRideCAD = true;
+            return;
+        } else if (
+            selectedFileType === "cam" &&
+            popupPart.files.camExt !== "" &&
+            !overRideCAM
+        ) {
+            alert(
+                "This Part Already Has A CAM File. Upload A New File To Override The Current One."
+            );
+            overRideCAM = true;
+            return;
+        }
 
-        let byteData = await axios.get(
-            "https://torqueue.texastorque.org/downloadPart",
-            {
-                params,
-            }
-        );
-
-        const data = byteData.data; // assume you have the data here
-        console.log(data);
-        //const arrayBuffer = base64ToArrayBuffer(data);
-        //createAndDownloadBlobFile(data, "testName");
+        openFileSelector.current["click"]();
     };
 
-    //function base64ToArrayBuffer(base64: string) {
-    //    const binaryString = window.atob(base64); // Comment this if not using base64
-    //    const bytes = new Uint8Array(binaryString.length);
-    //    return bytes.map((byte, i) => binaryString.charCodeAt(i));
-    //}
-//
-//    function createAndDownloadBlobFile(
-//        body: any,
-//        filename: any,
-//        extension = "pdf"
-//    ) {
-//        const blob = new Blob([body]);
-//        const fileName = `${filename}.${extension}`;
-//
-//        const link = document.createElement("a");
-//        // Browsers that support HTML5 download attribute
-//        if (link.download !== undefined) {
-//            const url = URL.createObjectURL(blob);
-//            link.setAttribute("href", url);
-//            link.setAttribute("download", fileName);
-//            link.style.visibility = "hidden";
-//            document.body.appendChild(link);
-//            link.click();
-//            document.body.removeChild(link);
-//        }
-//    }
+    const handleFileDownload = async (fileType: string) => {
+        let fileExtension = fileType === "cad" ? "cad" : "cam";
+        let params = {
+            fileId: popupPart.id,
+            fileExt: fileExtension,
+            name: `${popupPart.name}-${fileType === "cad" ? "CAD" : "GCODE"}`,
+        };
+
+        axios({
+            url: `${BACKEND_URL}/downloadPart`,
+            method: "GET",
+            responseType: "blob",
+            params: params,
+        }).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute(
+                "download",
+                `${popupPart.name}-${fileType}.${
+                    fileType === "cad"
+                        ? popupPart.files.cadExt
+                        : popupPart.files.camExt
+                }`
+            );
+            document.body.appendChild(link);
+            link.click();
+        });
+    };
 
     const savePart = () => {
         setHotPart({
             id: popupPart.id,
             name: name,
             status: status,
-            material: popupPart.material,
+            material: material,
             machine: machine,
             needed: needed,
             priority: priority,
             files: {
-                camExt: "",
-                cadExt: "",
+                camExt: popupPart.files.camExt,
+                cadExt: popupPart.files.cadExt,
             },
             notes: notes,
             dev: { delete: false, upload: false, download: false },
         });
-        setShowPopup(false);
     };
 
     const deletePart = () => {
@@ -324,7 +374,7 @@ export default function ManagePopup({
                                         priority === ""
                                             ? 0
                                             : parseInt(priority);
-                                    setPriority("" + Math.max(0, value - 1));
+                                    setPriority("" + Math.max(1, value - 1));
                                 }}
                             />
 
@@ -371,11 +421,10 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setUploadFileType("cad");
-                                if (partFile.current !== null) {
-                                    partFile.current["click"]();
+                                if (openFileSelector.current !== null) {
+                                    setUploadFileType("cad");
+                                    handleOpenFileSelector("cad");
                                 }
-                                setUploadFileType("cad");
                             }}
                         >
                             Upload CAD
@@ -386,7 +435,7 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                downloadFile("cad");
+                                handleFileDownload("cad");
                             }}
                         >
                             Download CAD
@@ -398,11 +447,10 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setUploadFileType("cad");
-                                if (partFile.current !== null) {
-                                    partFile.current["click"]();
+                                if (openFileSelector.current !== null) {
+                                    setUploadFileType("cam");
+                                    handleOpenFileSelector("cam");
                                 }
-                                setUploadFileType("cam");
                             }}
                         >
                             Upload GCODE
@@ -413,7 +461,7 @@ export default function ManagePopup({
                             className="btn btn-secondary left-11 rounded-sm"
                             onClick={(e) => {
                                 e.preventDefault();
-                                downloadFile("cam");
+                                handleFileDownload("cam");
                             }}
                         >
                             Download GCODE
@@ -440,6 +488,7 @@ export default function ManagePopup({
                         onClick={(e) => {
                             e.preventDefault();
                             savePart();
+                            setShowPopup(false);
                         }}
                     >
                         Save
@@ -449,7 +498,7 @@ export default function ManagePopup({
 
             <input
                 style={{ display: "none" }}
-                ref={partFile}
+                ref={openFileSelector}
                 onChange={handleFileUpload}
                 type="file"
             />

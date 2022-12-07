@@ -21,7 +21,8 @@ export default function TableRow({
 
     const complete = (e: any) => {
         e.preventDefault();
-        part.needed = parseInt(part.needed) - 1 + "";
+        if (parseInt(part.needed) > 0) part.needed = parseInt(part.needed) - 1 + "";
+        if (part.needed === "0") part.status++
         setHotPart(part);
     };
     return (

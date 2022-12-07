@@ -1,46 +1,35 @@
 {
-    "active": {
-        "23424547697758382": {
-            "id": "23424547697758382",
-            "name": "Swerve Plate",
-            "status": 2,
-            "material": "Aluminum",
-            "machine": "Tormach",
-            "needed": "4",
-            "priority": "3",
-            "dev": { "delete": false, "upload": false, "download": false }
-        },
-        "7589473897987": {
-            "id": "7589473897987",
-            "name": "Spacer",
-            "status": 3,
-            "material": "Aluminum",
-            "machine": "Lathe",
-            "needed": "1",
-            "priority": "9",
-            "dev": { "delete": false, "upload": false, "download": false }
-        },
-        "678647819804431": {
-            "id": "678647819804431",
-            "name": "Block",
-            "status": 3,
-            "material": "Polycarbonate",
-            "machine": "Nebula",
-            "needed": "1",
-            "priority": "3",
-            "dev": { "delete": false, "upload": false, "download": false }
-        }
+    "23424547697758382": {
+        "id": "23424547697758382",
+        "name": "Swerve Plate",
+        "status": 2,
+        "material": "Aluminum",
+        "machine": "Tormach",
+        "needed": "4",
+        "priority": "3",
+        "files": { "camExt": "", "cadExt": "" },
+        "dev": { "delete": false, "upload": false, "download": false }
     },
-    "archive": {
-        "5647687678216874687": {
-            "id": "5647687678216874687",
-            "name": "Blank",
-            "status": 0,
-            "material": "Polycarbonate",
-            "machine": "Nebula",
-            "needed": "1",
-            "priority": "3",
-            "dev": { "delete": false, "upload": false, "download": false }
-        }
+    "7589473897987": {
+        "id": "7589473897987",
+        "name": "Spacer",
+        "status": 3,
+        "material": "Aluminum",
+        "machine": "Lathe",
+        "needed": "1",
+        "priority": "9",
+        "files": { "camExt": "", "cadExt": "" },
+        "dev": { "delete": false, "upload": false, "download": false }
+    },
+    "678647819804431": {
+        "id": "678647819804431",
+        "name": "Block",
+        "status": 3,
+        "material": "Polycarbonate",
+        "machine": "Nebula",
+        "needed": "1",
+        "priority": "3",
+        "files": { "camExt": "", "cadExt": "" },
+        "dev": { "delete": false, "upload": false, "download": false }
     }
 }
