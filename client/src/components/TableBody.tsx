@@ -32,11 +32,10 @@ export default function TableBody({
     const getAllParts = async () => {
         let responseJSON: any;
         let listParts = [] as Part[];
-        await fetch(`${BACKEND_URL}/getAllParts`).then(
-            (response) =>
-                response.json().then((data) => {
-                    responseJSON = data[1].active;
-                })
+        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
+            response.json().then((data) => {
+                responseJSON = data[1];
+            })
         );
 
         for (let part in responseJSON) listParts.push(responseJSON[part]);
@@ -45,6 +44,7 @@ export default function TableBody({
             return numberSortArray(a.priority, b.priority);
         });
 
+        console.log(listParts);
         setParts(listParts);
     };
 

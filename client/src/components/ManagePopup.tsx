@@ -44,6 +44,8 @@ export default function ManagePopup({
 
     const openFileSelector = useRef(null);
 
+    let fileUploadExtension = "";
+
     useEffect(() => {
         previousName.current = name;
         previousMachine.current = machine;
@@ -56,7 +58,10 @@ export default function ManagePopup({
         const statusKeyboardInput = (e: any) => {
             if (e.keyCode === 39) setStatus(++status);
             else if (e.keyCode === 37) setStatus(--status);
-            else if (e.keyCode === 13) savePart();
+            else if (e.keyCode === 13) {
+                savePart();
+                setShowPopup(false);
+            }
         };
 
         window.addEventListener("keydown", statusKeyboardInput);
@@ -81,14 +86,13 @@ export default function ManagePopup({
         const { files } = e.target;
         if (files && files.length) {
             const parts = files[0].name.split(".");
-            const fileUploadExtension = parts[parts.length - 1];
+            fileUploadExtension = parts[parts.length - 1];
 
-            if (uploadFileType === "cad") popupPart.files.cadExt = fileUploadExtension;
+            if (uploadFileType === "cad")
+                popupPart.files.cadExt = fileUploadExtension;
             else popupPart.files.camExt = fileUploadExtension;
 
-            
             const formData = new FormData();
-
 
             formData.append("fileId", popupPart.id);
             formData.append("fileType", uploadFileType);
@@ -96,7 +100,7 @@ export default function ManagePopup({
 
             const request = await axios({
                 method: "POST",
-                url:`${BACKEND_URL}/uploadPart`,
+                url: `${BACKEND_URL}/uploadPart`,
                 headers: { "Content-Type": "multipart/form-data" },
                 data: formData,
             });
@@ -115,6 +119,8 @@ export default function ManagePopup({
                         success: false,
                     });
                 }, 2000);
+
+                savePart();
             }
         }
     };
@@ -136,7 +142,14 @@ export default function ManagePopup({
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `${popupPart.name}-${fileType}.${fileType === "cad" ? popupPart.files.cadExt :  popupPart.files.camExt}`);
+            link.setAttribute(
+                "download",
+                `${popupPart.name}-${fileType}.${
+                    fileType === "cad"
+                        ? popupPart.files.cadExt
+                        : popupPart.files.camExt
+                }`
+            );
             document.body.appendChild(link);
             link.click();
         });
@@ -147,18 +160,17 @@ export default function ManagePopup({
             id: popupPart.id,
             name: name,
             status: status,
-            material: popupPart.material,
+            material: material,
             machine: machine,
             needed: needed,
             priority: priority,
             files: {
-                camExt: "",
-                cadExt: "",
+                camExt: popupPart.files.camExt,
+                cadExt: popupPart.files.cadExt,
             },
             notes: notes,
             dev: { delete: false, upload: false, download: false },
         });
-        setShowPopup(false);
     };
 
     const deletePart = () => {
@@ -448,6 +460,7 @@ export default function ManagePopup({
                         onClick={(e) => {
                             e.preventDefault();
                             savePart();
+                            setShowPopup(false);
                         }}
                     >
                         Save

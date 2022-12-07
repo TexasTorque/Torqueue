@@ -57,7 +57,7 @@ export const setPartFB = async (part: Part) => {
     let errorMessage = "";
     let data = part.dev.delete ? null : part;
 
-    await set(dref(db, `/active/${part.id}`), data).catch((e) => {
+    await set(dref(db, `/${part.id}`), data).catch((e) => {
         console.log(e);
         errorMessage = e;
     });
