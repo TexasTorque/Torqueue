@@ -37,7 +37,7 @@ export default function ManagePopup({
     const previousMaterial = useRef("");
     const previousStatus = useRef(0);
     const previousNeeded = useRef("");
-    const previousPriority = useRef("");
+    const previousPriority = useRef("1");
     const previousNotes = useRef("");
 
     const [uploadFileType, setUploadFileType] = useState("cad");
@@ -374,7 +374,7 @@ export default function ManagePopup({
                                         priority === ""
                                             ? 0
                                             : parseInt(priority);
-                                    setPriority("" + Math.max(0, value - 1));
+                                    setPriority("" + Math.max(1, value - 1));
                                 }}
                             />
 

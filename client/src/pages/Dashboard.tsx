@@ -18,7 +18,7 @@ const defaultPart = {
     machine: "",
     material: "",
     needed: "0",
-    priority: "0",
+    priority: "5",
     notes: "",
     files: { camExt: "", cadExt: "" },
     dev: { delete: false, upload: false, download: false },
