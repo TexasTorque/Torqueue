@@ -2,7 +2,6 @@ import PartRow from "./PartRow";
 import { Part } from "../Interfaces";
 
 type Props = {
-    completedPart: Part;
     searchQuery: string;
     filter: string;
     BACKEND_URL: string;

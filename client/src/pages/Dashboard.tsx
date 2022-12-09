@@ -32,8 +32,8 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-    const BACKEND_URL = "https://torqueue.texastorque.org";
-    //const BACKEND_URL = "http://localhost:5738";
+    //const BACKEND_URL = "https://torqueue.texastorque.org";
+    const BACKEND_URL = "http://localhost:5738";
 
     initializeApp(firebaseConfig);
 
@@ -46,7 +46,6 @@ export default function Dashboard() {
     const [popupPart, setPopupPart] = useState<Part>(defaultPart);
     const [showPopup, setShowPopup] = useState(false);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
-    const [completedPart, setCompletedPart] = useState<Part>(defaultPart);
     const [parts, setParts] = useState<Part[]>(null);
 
     const [filter, setFilter] = useState("Select a filter");
@@ -77,32 +76,50 @@ export default function Dashboard() {
     useEffect(() => {
         const handleAsync = async () => {
             if (hotPart.id === "") return;
+            let deleteStatus = "success",
+                message = "";
 
-            const request = await axios.post(`${BACKEND_URL}/editPart`, {
+            const successMessage = hotPart.dev.delete
+                ? `Successfully Deleted ${hotPart.name}!`
+                : `Successfully Changed ${hotPart.name}!`;
+
+            const errorMessage = hotPart.dev.delete
+                ? `Failed To Deleted ${hotPart.name}!`
+                : `Failed To Change ${hotPart.name}!`;
+
+            const setRequest = await axios.post(`${BACKEND_URL}/editPart`, {
                 hotPart,
             });
 
-            const message = hotPart.dev.delete
-                ? "Part Successfully Deleted"
-                : "Successfully Modified " + hotPart.name + "!";
+            if (hotPart.dev.delete) {
+                const deleteRequest = await axios.post(
+                    `${BACKEND_URL}/deletePart`,
+                    {
+                        hotPart,
+                    }
+                );
 
-            if (request.data === "success") {
-                setAlert({
-                    show: true,
-                    message: message,
-                    success: true,
-                });
-
-                setTimeout(() => {
-                    setAlert({
-                        show: false,
-                        message: "",
-                        success: false,
-                    });
-                }, 2000);
-
-                setCompletedPart(hotPart);
+                deleteStatus = deleteRequest.data;
             }
+
+            message =
+                setRequest.data === "success" && deleteStatus === "success"
+                    ? successMessage
+                    : errorMessage;
+
+            setAlert({
+                show: true,
+                message: message,
+                success: message === successMessage,
+            });
+
+            setTimeout(() => {
+                setAlert({
+                    show: false,
+                    message: "",
+                    success: false,
+                });
+            }, 2000);
         };
 
         handleAsync();
@@ -110,15 +127,14 @@ export default function Dashboard() {
 
     useEffect(() => {
         const statusKeyboardInput = (e: any) => {
-            if (e.keyCode === 65) setShowPopup(true);
+            if (e.keyCode === 65) handleAddPart();
         };
 
         window.addEventListener("keydown", statusKeyboardInput);
         return () => window.removeEventListener("keydown", statusKeyboardInput);
     });
 
-    const handleAddPart = (e: any) => {
-        e.preventDefault();
+    const handleAddPart = () => {
         let newPart = defaultPart;
         newPart.id = uuid4();
         setPopupPart(newPart);
@@ -197,7 +213,6 @@ export default function Dashboard() {
                             <tbody>
                                 <TableBody
                                     setPopupPart={setPopupPart}
-                                    completedPart={completedPart}
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
                                     filter={filter}
@@ -219,12 +234,13 @@ export default function Dashboard() {
                 showPopup={showPopup}
                 setAlert={setAlert}
                 BACKEND_URL={BACKEND_URL}
+                defaultPart={defaultPart}
             />
 
             <button
                 type="button"
                 className="AddPartButton"
-                onClick={(e) => handleAddPart(e)}
+                onClick={(e) => handleAddPart()}
             >
                 +
             </button>

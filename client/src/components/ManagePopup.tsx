@@ -9,6 +9,7 @@ type Props = {
     popupPart: Part;
     showPopup: boolean;
     BACKEND_URL: string;
+    defaultPart: Part;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -22,6 +23,8 @@ export default function ManagePopup({
     setShowPopup,
     setAlert,
     BACKEND_URL,
+    defaultPart,
+    setPopupPart,
 }: Props) {
     const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
@@ -199,6 +202,8 @@ export default function ManagePopup({
             notes: notes,
             dev: { delete: false, upload: false, download: false },
         });
+
+        setPopupPart(defaultPart);
     };
 
     const deletePart = () => {
@@ -212,8 +217,8 @@ export default function ManagePopup({
             priority: "",
             notes: "",
             files: {
-                camExt: "",
-                cadExt: "",
+                camExt: popupPart.files.camExt,
+                cadExt: popupPart.files.cadExt,
             },
             dev: { delete: true, upload: false, download: false },
         });
@@ -222,12 +227,22 @@ export default function ManagePopup({
 
     return (
         <>
-            <Modal show={showPopup} onHide={() => setShowPopup(false)}>
+            <Modal
+                show={showPopup}
+                onHide={() => {
+                    setPopupPart(defaultPart);
+                    setShowPopup(false);
+                    console.log("Bye")
+                }}
+            >
                 <Modal.Header closeButton className="bg-black text-white">
                     <Modal.Title>{popupName}</Modal.Title>
                     <button
                         className="absolute right-5"
-                        onClick={(e) => setShowPopup(false)}
+                        onClick={() => {
+                            setPopupPart(defaultPart);
+                            setShowPopup(false);
+                        }}
                     >
                         X
                     </button>

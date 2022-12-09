@@ -1,6 +1,11 @@
 import asyncHandler from "express-async-handler";
-import { getAllPartsFB, setPartFB } from "./firebase";
-import { uploadPartFirebase, getPartDownloadURLFirebase } from "./firebase";
+import {
+    getAllPartsFB,
+    setPartFB,
+    uploadPartFirebase,
+    getPartDownloadURLFirebase,
+    deletePartFB,
+} from "./firebase";
 import { Request, Response } from "express";
 
 interface MulterRequest extends Request {
@@ -15,18 +20,31 @@ export const editPart = asyncHandler(async (req, res) => {
     res.send(await setPartFB(req.body.hotPart));
 });
 
-export const uploadFile = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-        const file = (req as MulterRequest).file;
+export const uploadFile = asyncHandler(async (req: Request, res: Response) => {
+    const file = (req as MulterRequest).file;
 
-        let partFile = file || null;
+    let partFile = file || null;
 
-        let fileId = req.body.fileId;
-        let fileType = req.body.fileType;
+    let fileId = req.body.fileId;
+    let fileType = req.body.fileType;
 
-        res.send(await uploadPartFirebase(partFile, fileId, fileType));
-    }
-);
+    res.send(await uploadPartFirebase(partFile, fileId, fileType));
+});
+
+export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
+    let cadDelete = "success",
+        camDelete = "success";
+
+    if (req.body.hotPart.files.cadExt !== "")
+        cadDelete = await deletePartFB(req.body.hotPart.id, "cad");
+
+    if (req.body.hotPart.files.camExt !== "")
+        camDelete = await deletePartFB(req.body.hotPart.id, "cam");
+
+    res.send(
+        cadDelete === "success" && camDelete === "success" ? "success" : "error"
+    );
+});
 
 export const getFileDownloadURL = asyncHandler(async (req, res) => {
     let fileId = req.query.fileId;
