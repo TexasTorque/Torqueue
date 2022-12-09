@@ -13,8 +13,7 @@ export interface Part {
     };
     dev: {
         delete: boolean;
-        upload: boolean;
-        download: boolean;
+      
     };
 }
 

@@ -1,12 +1,11 @@
 import TableHeader from "../components/TableHeader";
 import Table from "react-bootstrap/Table";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
 import "../index.css";
 import { Part } from "../Interfaces";
-import { v4 as uuid4 } from "uuid";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
 import torqueueLogo from "../imgs/torqueueLogo.png";
@@ -51,31 +50,38 @@ export default function Dashboard() {
     const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
 
+    let addPart = useRef(false);
+
+    const getParts = async () => {
+        let responseJSON: any;
+        let listParts = [] as Part[];
+        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
+            response.json().then((data) => {
+                responseJSON = data[1];
+            })
+        );
+
+        for (let part in responseJSON) listParts.push(responseJSON[part]);
+
+        listParts.sort((a, b) => {
+            return numberSortArray(a.priority, b.priority);
+        });
+
+        setParts(listParts);
+    };
+
     useEffect(() => {
         const db = getDatabase();
         const dbRef = ref(db, "/");
         onValue(dbRef, async () => {
-            let responseJSON: any;
-            let listParts = [] as Part[];
-            await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
-                response.json().then((data) => {
-                    responseJSON = data[1];
-                })
-            );
-
-            for (let part in responseJSON) listParts.push(responseJSON[part]);
-
-            listParts.sort((a, b) => {
-                return numberSortArray(a.priority, b.priority);
-            });
-
-            setParts(listParts);
+            getParts();
         });
     }, []);
 
     useEffect(() => {
         const handleAsync = async () => {
-            if (hotPart.id === "") return;
+            if (hotPart.id === "" || hotPart.name === "") return;
+
             let deleteStatus = "success",
                 message = "";
 
@@ -102,6 +108,8 @@ export default function Dashboard() {
                 deleteStatus = deleteRequest.data;
             }
 
+            getParts();
+
             message =
                 setRequest.data === "success" && deleteStatus === "success"
                     ? successMessage
@@ -127,7 +135,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         const statusKeyboardInput = (e: any) => {
-            if (e.keyCode === 65) handleAddPart();
+            if (e.keyCode === 65 && !showPopup) handleAddPart();
         };
 
         window.addEventListener("keydown", statusKeyboardInput);
@@ -135,9 +143,8 @@ export default function Dashboard() {
     });
 
     const handleAddPart = () => {
-        let newPart = defaultPart;
-        newPart.id = uuid4();
-        setPopupPart(newPart);
+        addPart.current = true;
+        setPopupPart(defaultPart);
         setShowPopup(true);
     };
 
@@ -235,12 +242,13 @@ export default function Dashboard() {
                 setAlert={setAlert}
                 BACKEND_URL={BACKEND_URL}
                 defaultPart={defaultPart}
+                addPart={addPart}
             />
 
             <button
                 type="button"
                 className="AddPartButton"
-                onClick={(e) => handleAddPart()}
+                onClick={() => handleAddPart()}
             >
                 +
             </button>

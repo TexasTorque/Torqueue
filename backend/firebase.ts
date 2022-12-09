@@ -85,10 +85,7 @@ export const deletePartFB = async (fileId: string, fileType: string) => {
 
     if (fileType === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
     else targetRef = sref(storage, `parts_files/${fileId}`);
-    await deleteObject(targetRef).catch((e) => {
-        console.log(e);
-        errorMessage = e;
-    });
+    await deleteObject(targetRef).catch((e) => (errorMessage = e));
     if (errorMessage !== "") return errorMessage;
     return "success";
 };

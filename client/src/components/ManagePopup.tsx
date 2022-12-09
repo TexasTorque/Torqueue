@@ -4,12 +4,14 @@ import "../index.css";
 import { Part, Status } from "../Interfaces";
 import Dropdown from "react-bootstrap/Dropdown";
 import axios from "axios";
+import { v4 as uuid4 } from "uuid";
 
 type Props = {
     popupPart: Part;
     showPopup: boolean;
     BACKEND_URL: string;
     defaultPart: Part;
+    addPart: any;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -25,6 +27,7 @@ export default function ManagePopup({
     BACKEND_URL,
     defaultPart,
     setPopupPart,
+    addPart,
 }: Props) {
     const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
@@ -42,14 +45,16 @@ export default function ManagePopup({
     const previousNeeded = useRef("");
     const previousPriority = useRef("1");
     const previousNotes = useRef("");
+    let overRideCAD = useRef(false);
+    let overRideCAM = useRef(false);
 
     const [uploadFileType, setUploadFileType] = useState("cad");
 
     const openFileSelector = useRef(null);
 
     let fileUploadExtension = "",
-        overRideCAD = false,
-        overRideCAM = false;
+        initCamExt = "",
+        initCadExt = "";
 
     useEffect(() => {
         previousName.current = name;
@@ -61,11 +66,11 @@ export default function ManagePopup({
         previousNotes.current = notes;
 
         const statusKeyboardInput = (e: any) => {
+            e.preventDefault();
             if (e.keyCode === 39) setStatus(++status);
             else if (e.keyCode === 37) setStatus(--status);
             else if (e.keyCode === 13) {
-                savePart();
-                setShowPopup(false);
+                savePartAndClose();
             }
         };
 
@@ -76,6 +81,12 @@ export default function ManagePopup({
     }, [name, machine, status, needed, priority, material, notes]);
 
     useEffect(() => {
+        overRideCAD.current = false;
+        overRideCAM.current = false;
+
+        initCamExt = popupPart.files.camExt;
+        initCadExt = popupPart.files.cadExt;
+
         setName(popupPart.name);
         setMachine(popupPart.machine);
         setStatus(popupPart.status);
@@ -83,9 +94,12 @@ export default function ManagePopup({
         setPriority(popupPart.priority);
         setMaterial(popupPart.material);
         setNotes(popupPart.notes);
-        if (popupPart.name === "") setPopupName("Add A New Part");
-        else setPopupName(`Edit ${popupPart.name}`);
-    }, [popupPart]);
+        if (addPart.current) {
+            setPopupName("Add A New Part");
+            popupPart.id = uuid4();
+            addPart.current = false;
+        } else setPopupName(`Edit ${popupPart.name}`);
+    }, [popupPart, showPopup]);
 
     const handleFileUpload = async (e: { target: { files: any } }) => {
         const { files } = e.target;
@@ -125,7 +139,7 @@ export default function ManagePopup({
                     });
                 }, 2000);
 
-                savePart();
+                if (name !== "") savePart();
             }
         }
     };
@@ -139,7 +153,7 @@ export default function ManagePopup({
             alert(
                 "This Part Already Has A CAD File. Upload A New File To Override The Current One."
             );
-            overRideCAD = true;
+            overRideCAD.current = true;
             return;
         } else if (
             selectedFileType === "cam" &&
@@ -149,7 +163,7 @@ export default function ManagePopup({
             alert(
                 "This Part Already Has A CAM File. Upload A New File To Override The Current One."
             );
-            overRideCAM = true;
+            overRideCAM.current = true;
             return;
         }
 
@@ -157,6 +171,13 @@ export default function ManagePopup({
     };
 
     const handleFileDownload = async (fileType: string) => {
+        if (popupPart.files.camExt === "" && fileType === "cam") {
+            alert("No GCODE Found");
+            return;
+        } else if (popupPart.files.cadExt === "" && fileType === "cad") {
+            alert("No CAD File Found");
+            return;
+        }
         let fileExtension = fileType === "cad" ? "cad" : "cam";
         let params = {
             fileId: popupPart.id,
@@ -187,6 +208,11 @@ export default function ManagePopup({
     };
 
     const savePart = () => {
+        if (name === "") {
+            alert("Please provide a name");
+            return;
+        }
+
         setHotPart({
             id: popupPart.id,
             name: name,
@@ -200,16 +226,53 @@ export default function ManagePopup({
                 cadExt: popupPart.files.cadExt,
             },
             notes: notes,
-            dev: { delete: false, upload: false, download: false },
+            dev: { delete: false },
         });
+    };
 
-        setPopupPart(defaultPart);
+    const savePartAndClose = () => {
+        if (name === "") {
+            alert("Please provide a name");
+            return;
+        }
+
+        if (
+            name !== popupPart.name ||
+            machine !== popupPart.machine ||
+            status !== popupPart.status ||
+            needed !== popupPart.needed ||
+            priority !== popupPart.priority ||
+            material !== popupPart.material ||
+            notes !== popupPart.notes ||
+            popupPart.files.camExt !== initCamExt ||
+            popupPart.files.cadExt !== initCadExt
+        ) {
+            setHotPart({
+                id: popupPart.id,
+                name: name,
+                status: status,
+                material: material,
+                machine: machine,
+                needed: needed,
+                priority: priority,
+                files: {
+                    camExt: popupPart.files.camExt,
+                    cadExt: popupPart.files.cadExt,
+                },
+                notes: notes,
+                dev: { delete: false },
+            });
+
+            setPopupPart(defaultPart);
+        }
+
+        setShowPopup(false);
     };
 
     const deletePart = () => {
         setHotPart({
             id: popupPart.id,
-            name: "",
+            name: popupPart.name,
             status: 0,
             material: "",
             machine: "",
@@ -220,7 +283,7 @@ export default function ManagePopup({
                 camExt: popupPart.files.camExt,
                 cadExt: popupPart.files.cadExt,
             },
-            dev: { delete: true, upload: false, download: false },
+            dev: { delete: true },
         });
         setShowPopup(false);
     };
@@ -232,7 +295,6 @@ export default function ManagePopup({
                 onHide={() => {
                     setPopupPart(defaultPart);
                     setShowPopup(false);
-                    console.log("Bye")
                 }}
             >
                 <Modal.Header closeButton className="bg-black text-white">
@@ -502,8 +564,7 @@ export default function ManagePopup({
                         type="submit"
                         onClick={(e) => {
                             e.preventDefault();
-                            savePart();
-                            setShowPopup(false);
+                            savePartAndClose();
                         }}
                     >
                         Save
