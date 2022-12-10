@@ -43,7 +43,7 @@
             ">0.2%",
             "not dead",
             "not op_mini all",
-            "Firefox > 10"
+            "Firefox >= 40"
         ],
         "development": [
             "last 1 chrome version",
