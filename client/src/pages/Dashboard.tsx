@@ -1,12 +1,11 @@
 import TableHeader from "../components/TableHeader";
 import Table from "react-bootstrap/Table";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
 import "../index.css";
 import { Part } from "../Interfaces";
-import { v4 as uuid4 } from "uuid";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
 import torqueueLogo from "../imgs/torqueueLogo.png";
@@ -32,8 +31,8 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-    const BACKEND_URL = "https://torqueue.texastorque.org";
-    //const BACKEND_URL = "http://localhost:5738";
+    //const BACKEND_URL = "https://torqueue.texastorque.org";
+    const BACKEND_URL = "http://localhost:5738";
 
     initializeApp(firebaseConfig);
 
@@ -46,63 +45,89 @@ export default function Dashboard() {
     const [popupPart, setPopupPart] = useState<Part>(defaultPart);
     const [showPopup, setShowPopup] = useState(false);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
-    const [completedPart, setCompletedPart] = useState<Part>(defaultPart);
     const [parts, setParts] = useState<Part[]>(null);
 
     const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
 
+    let addPart = useRef(false);
+
+    const getParts = async () => {
+        let responseJSON: any;
+        let listParts = [] as Part[];
+        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
+            response.json().then((data) => {
+                responseJSON = data[1];
+            })
+        );
+
+        for (let part in responseJSON) listParts.push(responseJSON[part]);
+
+        listParts.sort((a, b) => {
+            return numberSortArray(a.priority, b.priority);
+        });
+
+        setParts(listParts);
+    };
+
     useEffect(() => {
         const db = getDatabase();
         const dbRef = ref(db, "/");
         onValue(dbRef, async () => {
-            let responseJSON: any;
-            let listParts = [] as Part[];
-            await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
-                response.json().then((data) => {
-                    responseJSON = data[1];
-                })
-            );
-
-            for (let part in responseJSON) listParts.push(responseJSON[part]);
-
-            listParts.sort((a, b) => {
-                return numberSortArray(a.priority, b.priority);
-            });
-
-            setParts(listParts);
+            getParts();
         });
     }, []);
 
     useEffect(() => {
         const handleAsync = async () => {
-            if (hotPart.id === "") return;
+            if (hotPart.id === "" || hotPart.name === "") return;
 
-            const request = await axios.post(`${BACKEND_URL}/editPart`, {
+            let deleteStatus = "success",
+                message = "";
+
+            const successMessage = hotPart.dev.delete
+                ? `Successfully Deleted ${hotPart.name}!`
+                : `Successfully Changed ${hotPart.name}!`;
+
+            const errorMessage = hotPart.dev.delete
+                ? `Failed To Deleted ${hotPart.name}!`
+                : `Failed To Change ${hotPart.name}!`;
+
+            const setRequest = await axios.post(`${BACKEND_URL}/editPart`, {
                 hotPart,
             });
 
-            const message = hotPart.dev.delete
-                ? "Part Successfully Deleted"
-                : "Successfully Modified " + hotPart.name + "!";
+            if (hotPart.dev.delete) {
+                const deleteRequest = await axios.post(
+                    `${BACKEND_URL}/deletePart`,
+                    {
+                        hotPart,
+                    }
+                );
 
-            if (request.data === "success") {
-                setAlert({
-                    show: true,
-                    message: message,
-                    success: true,
-                });
-
-                setTimeout(() => {
-                    setAlert({
-                        show: false,
-                        message: "",
-                        success: false,
-                    });
-                }, 2000);
-
-                setCompletedPart(hotPart);
+                deleteStatus = deleteRequest.data;
             }
+
+            getParts();
+
+            message =
+                setRequest.data === "success" && deleteStatus === "success"
+                    ? successMessage
+                    : errorMessage;
+
+            setAlert({
+                show: true,
+                message: message,
+                success: message === successMessage,
+            });
+
+            setTimeout(() => {
+                setAlert({
+                    show: false,
+                    message: "",
+                    success: false,
+                });
+            }, 2000);
         };
 
         handleAsync();
@@ -110,18 +135,16 @@ export default function Dashboard() {
 
     useEffect(() => {
         const statusKeyboardInput = (e: any) => {
-            if (e.keyCode === 65) setShowPopup(true);
+            if (e.keyCode === 65 && !showPopup) handleAddPart();
         };
 
         window.addEventListener("keydown", statusKeyboardInput);
         return () => window.removeEventListener("keydown", statusKeyboardInput);
     });
 
-    const handleAddPart = (e: any) => {
-        e.preventDefault();
-        let newPart = defaultPart;
-        newPart.id = uuid4();
-        setPopupPart(newPart);
+    const handleAddPart = () => {
+        addPart.current = true;
+        setPopupPart(defaultPart);
         setShowPopup(true);
     };
 
@@ -197,7 +220,6 @@ export default function Dashboard() {
                             <tbody>
                                 <TableBody
                                     setPopupPart={setPopupPart}
-                                    completedPart={completedPart}
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
                                     filter={filter}
@@ -219,12 +241,14 @@ export default function Dashboard() {
                 showPopup={showPopup}
                 setAlert={setAlert}
                 BACKEND_URL={BACKEND_URL}
+                defaultPart={defaultPart}
+                addPart={addPart}
             />
 
             <button
                 type="button"
                 className="AddPartButton"
-                onClick={(e) => handleAddPart(e)}
+                onClick={() => handleAddPart()}
             >
                 +
             </button>

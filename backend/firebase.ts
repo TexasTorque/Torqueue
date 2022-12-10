@@ -1,15 +1,13 @@
 import { initializeApp } from "firebase/app";
 import {
-    getBlob,
     getBytes,
-    getDownloadURL,
     getStorage,
-    getStream,
     ref as sref,
     uploadBytes,
+    deleteObject,
 } from "firebase/storage";
 import { getDatabase, ref as dref, get, set, child } from "firebase/database";
-import { Part, Files } from "./Interfaces";
+import { Part } from "./Interfaces";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -27,8 +25,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const storage = getStorage(app);
-const partsRef = sref(storage, "/parts_files");
-const camRef = sref(storage, "/cam_files");
 
 const db = getDatabase();
 const dbRef = dref(getDatabase());
@@ -66,27 +62,37 @@ export const setPartFB = async (part: Part) => {
     else return "success";
 };
 
-export async function uploadPartFirebase(
+export const uploadPartFirebase = async (
     partFile: any,
     fileId: string,
     fileType: string
-) {
+) => {
     let targetRef: any;
     let errorMessage = "";
 
     if (fileType === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
     else targetRef = sref(storage, `parts_files/${fileId}`);
     await uploadBytes(targetRef, partFile.buffer).catch((e) => {
-        console.log(e);
         errorMessage = e;
     });
     if (errorMessage !== "") return errorMessage;
     return "success";
-}
+};
 
-export async function getPartDownloadURLFirebase(fileId: any, fileExt: any) {
+export const deletePartFB = async (fileId: string, fileType: string) => {
+    let targetRef: any;
+    let errorMessage = "";
+
+    if (fileType === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
+    else targetRef = sref(storage, `parts_files/${fileId}`);
+    await deleteObject(targetRef).catch((e) => (errorMessage = e));
+    if (errorMessage !== "") return errorMessage;
+    return "success";
+};
+
+export const getPartDownloadURLFirebase = async (fileId: any, fileExt: any) => {
     let targetRef: any;
     if (fileExt === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
     else targetRef = sref(storage, `parts_files/${fileId}`);
     return await getBytes(targetRef);
-}
+};
