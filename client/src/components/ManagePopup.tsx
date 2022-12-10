@@ -12,6 +12,8 @@ type Props = {
     BACKEND_URL: string;
     defaultPart: Part;
     addPart: any;
+    name: string;
+    setName: (name: string) => void;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -28,8 +30,9 @@ export default function ManagePopup({
     defaultPart,
     setPopupPart,
     addPart,
+    name,
+    setName,
 }: Props) {
-    const [name, setName] = useState(popupPart.name);
     const [machine, setMachine] = useState(popupPart.machine);
     const [material, setMaterial] = useState(popupPart.machine);
     let [status, setStatus] = useState(popupPart.status);
@@ -45,8 +48,8 @@ export default function ManagePopup({
     const previousNeeded = useRef("");
     const previousPriority = useRef("1");
     const previousNotes = useRef("");
-    let overRideCAD = useRef(false);
-    let overRideCAM = useRef(false);
+    const overRideCAD = useRef(false);
+    const overRideCAM = useRef(false);
 
     const [uploadFileType, setUploadFileType] = useState("cad");
 
@@ -66,10 +69,10 @@ export default function ManagePopup({
         previousNotes.current = notes;
 
         const statusKeyboardInput = (e: any) => {
-            e.preventDefault();
             if (e.keyCode === 39) setStatus(++status);
             else if (e.keyCode === 37) setStatus(--status);
             else if (e.keyCode === 13) {
+                e.preventDefault();
                 savePartAndClose();
             }
         };
@@ -84,7 +87,9 @@ export default function ManagePopup({
         overRideCAD.current = false;
         overRideCAM.current = false;
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         initCamExt = popupPart.files.camExt;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         initCadExt = popupPart.files.cadExt;
 
         setName(popupPart.name);
@@ -314,6 +319,7 @@ export default function ManagePopup({
                         <label className="Popup">Name: </label>
                         <input
                             type="text"
+                            autoFocus
                             className="form-control Popup w-50 BlackTextBox relative left-4"
                             value={name}
                             onChange={(e) => setName(e.target.value)}

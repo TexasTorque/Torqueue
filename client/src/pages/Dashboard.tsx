@@ -46,6 +46,7 @@ export default function Dashboard() {
     const [showPopup, setShowPopup] = useState(false);
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
     const [parts, setParts] = useState<Part[]>(null);
+    const [name, setName] = useState("");
 
     const [filter, setFilter] = useState("Select a filter");
     const [searchQuery, setSearchQuery] = useState("");
@@ -146,6 +147,7 @@ export default function Dashboard() {
         addPart.current = true;
         setPopupPart(defaultPart);
         setShowPopup(true);
+        setName("bruh");
     };
 
     return (
@@ -243,6 +245,8 @@ export default function Dashboard() {
                 BACKEND_URL={BACKEND_URL}
                 defaultPart={defaultPart}
                 addPart={addPart}
+                name={name}
+                setName={setName}
             />
 
             <button
