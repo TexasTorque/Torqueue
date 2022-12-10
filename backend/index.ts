@@ -12,7 +12,7 @@ import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5738;
-const production = false;
+const production = true;
 
 if (production) {
     app.use("/", express.static(path.join(__dirname, "./build")));
@@ -36,6 +36,6 @@ app.get("/getAllParts", getAllParts);
 app.post("/editPart", editPart);
 app.post("/uploadPart", upload.single("partUpload"), uploadFile);
 app.get("/downloadPart", getFileDownloadURL);
-app.post("/deletePart", deleteFile)
+app.post("/deletePart", deleteFile);
 
 app.listen(port, () => console.log(`Server started on ${port}!`));
