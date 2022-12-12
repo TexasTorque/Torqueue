@@ -7,6 +7,7 @@ export interface Part {
     name: string;
     status: number;
     material: string;
+    project: string;
     machine: string;
     needed: string;
     priority: string;

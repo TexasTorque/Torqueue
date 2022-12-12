@@ -7,7 +7,7 @@ type Props = {
     setHotPart: (part: Part) => void;
 };
 
-export default function TableRow({
+export default function PartRow({
     part,
     setPopupPart,
     setHotPart,
@@ -21,8 +21,9 @@ export default function TableRow({
 
     const complete = (e: any) => {
         e.preventDefault();
-        if (parseInt(part.needed) > 0) part.needed = parseInt(part.needed) - 1 + "";
-        if (part.needed === "0") part.status++
+        if (parseInt(part.needed) > 0)
+            part.needed = parseInt(part.needed) - 1 + "";
+        if (part.needed === "0") part.status++;
         setHotPart(part);
     };
     return (
@@ -30,13 +31,20 @@ export default function TableRow({
             <td>{part.priority}</td>
             <td>{part.name}</td>
             <td>{part.machine}</td>
+            <td>{part.project}</td>
             <td>{part.material}</td>
             <td>{Object.values(Status)[part.status < 0 ? 0 : part.status]}</td>
             <td>{part.needed}</td>
             <td>
                 <Button
                     onClick={(e) => complete(e)}
-                    className="btn btn-success"
+                    className="btn btn-success flex"
+                    style={{
+                        alignItems: "center",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        top: ".5em",
+                    }}
                 >
                     ✓
                 </Button>

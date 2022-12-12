@@ -4,11 +4,12 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useEffect, useState, useRef } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
+import { ProjectFilter } from "../components/ProjectFilter";
 import "../index.css";
 import { Part } from "../Interfaces";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
-import torqueueLogo from "../imgs/torqueueLogo.png";
+import torqueLogo from "../imgs/torqueLogo.png";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { firebaseConfig } from "../keys";
@@ -22,6 +23,7 @@ const defaultPart = {
     needed: "0",
     priority: "5",
     notes: "",
+    project: "",
     files: { camExt: "", cadExt: "" },
     dev: { delete: false, upload: false, download: false },
 };
@@ -47,8 +49,11 @@ export default function Dashboard() {
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
     const [parts, setParts] = useState<Part[]>(null);
     const [name, setName] = useState("");
+    const [projects, setProjects] = useState<string[]>([]);
 
-    const [filter, setFilter] = useState("Select a filter");
+    const [machineFilter, setMachineFilter] = useState("Select a filter");
+    const [projectFilter, setProjectFilter] = useState("Select a filter");
+
     const [searchQuery, setSearchQuery] = useState("");
 
     let addPart = useRef(false);
@@ -56,13 +61,23 @@ export default function Dashboard() {
     const getParts = async () => {
         let responseJSON: any;
         let listParts = [] as Part[];
-        await fetch(`${BACKEND_URL}/getAllParts`).then((response) =>
-            response.json().then((data) => {
-                responseJSON = data[1];
-            })
-        );
+        await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
+            responseJSON = data.data[1];
+        });
 
         for (let part in responseJSON) listParts.push(responseJSON[part]);
+
+        for (let i = 0; i < listParts.length; i++) {
+            if (
+                !projects.includes(listParts[i].project) &&
+                listParts[i].project !== undefined &&
+                listParts[i].project !== ""
+            ) {
+                projects.push(listParts[i].project);
+            }
+        }
+
+        setProjects(projects);
 
         listParts.sort((a, b) => {
             return numberSortArray(a.priority, b.priority);
@@ -77,6 +92,7 @@ export default function Dashboard() {
         onValue(dbRef, async () => {
             getParts();
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -132,6 +148,7 @@ export default function Dashboard() {
         };
 
         handleAsync();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hotPart]);
 
     useEffect(() => {
@@ -147,7 +164,7 @@ export default function Dashboard() {
         addPart.current = true;
         setPopupPart(defaultPart);
         setShowPopup(true);
-        setName("bruh");
+        setName("");
     };
 
     return (
@@ -162,41 +179,73 @@ export default function Dashboard() {
                 {alert.message}
             </div>
             <div className="fixed-top navbar NavHead flex">
-                <h2 className="flex pl-3">Filter: </h2>
+                <h2 className="flex pl-3">Project: </h2>
                 <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
                     <Dropdown.Toggle variant="success">
-                        {filter}
+                        {projectFilter}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => setFilter("None")}>
+                        <Dropdown.Item onClick={() => setProjectFilter("None")}>
+                            None
+                        </Dropdown.Item>
+                        <ProjectFilter
+                            projects={projects}
+                            setProjectFilter={setProjectFilter}
+                        />
+                    </Dropdown.Menu>
+                </Dropdown>
+                <h2 className="flex pl-3">Machine: </h2>
+                <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
+                    <Dropdown.Toggle variant="success">
+                        {machineFilter}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => setMachineFilter("None")}>
                             None
                         </Dropdown.Item>
                         <Dropdown.Item
-                            onClick={() => setFilter("All machines")}
+                            onClick={() => setMachineFilter("All machines")}
                         >
                             All machines
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={() => setFilter("Tormach")}>
+                        <Dropdown.Item
+                            onClick={() => setMachineFilter("Tormach")}
+                        >
                             Tormach
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={() => setFilter("Nebula")}>
+                        <Dropdown.Item
+                            onClick={() => setMachineFilter("Nebula")}
+                        >
                             Nebula
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={() => setFilter("Omio")}>
+                        <Dropdown.Item onClick={() => setMachineFilter("Omio")}>
                             Omio
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={() => setFilter("Lathe")}>
+                        <Dropdown.Item
+                            onClick={() => setMachineFilter("Lathe")}
+                        >
                             Lathe
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
-                <img
-                    src={torqueueLogo}
-                    alt="TorqueueLogo"
-                    className="h-12 Textenter TextCenterDiv"
-                    style={{ position: "absolute", left: "43%", right: "50%" }}
-                ></img>
+
+                <div
+                    className="flex TextCenterDiv"
+                    style={{
+                        alignItems: "center",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                    }}
+                >
+                    <img
+                        src={torqueLogo}
+                        alt="TorqueueLogo"
+                        className="h-12"
+                    ></img>
+                    <h1>Torqueue</h1>
+                </div>
 
                 <div style={{ marginLeft: "auto" }}>
                     <input
@@ -224,10 +273,11 @@ export default function Dashboard() {
                                     setPopupPart={setPopupPart}
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
-                                    filter={filter}
+                                    filter={machineFilter}
                                     setShowPopup={setShowPopup}
                                     BACKEND_URL={BACKEND_URL}
                                     parts={parts}
+                                    projectFilter={projectFilter}
                                 />
                             </tbody>
                         </Table>

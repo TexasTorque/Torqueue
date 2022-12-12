@@ -6,6 +6,7 @@ type Props = {
     filter: string;
     BACKEND_URL: string;
     parts: Part[];
+    projectFilter: string;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -18,6 +19,7 @@ export default function TableBody({
     filter,
     setShowPopup,
     parts,
+    projectFilter,
 }: Props) {
     let includeCompleted = false;
 
@@ -28,6 +30,7 @@ export default function TableBody({
         filter = "";
         includeCompleted = true;
     }
+
     return parts === null ? (
         <tr>
             <td>Loading...</td>
@@ -37,6 +40,13 @@ export default function TableBody({
             {parts
                 .filter((part) =>
                     part.machine.toLowerCase().includes(filter.toLowerCase())
+                )
+                .filter((part) =>
+                    projectFilter === "None" || projectFilter === "Select a filter"
+                        ? true
+                        : part.project
+                              .toLowerCase()
+                              .includes(projectFilter.toLowerCase())
                 )
                 .filter((part) => (includeCompleted ? true : part.status !== 5))
                 .filter((part) =>
