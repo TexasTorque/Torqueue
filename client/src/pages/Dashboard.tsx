@@ -33,8 +33,8 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-    //const BACKEND_URL = "https://torqueue.texastorque.org";
-    const BACKEND_URL = "http://localhost:5738";
+    const BACKEND_URL = "https://torqueue.texastorque.org";
+    //const BACKEND_URL = "http://localhost:5738";
 
     initializeApp(firebaseConfig);
 
@@ -70,7 +70,8 @@ export default function Dashboard() {
         for (let i = 0; i < listParts.length; i++) {
             if (
                 !projects.includes(listParts[i].project) &&
-                listParts[i].project !== undefined
+                listParts[i].project !== undefined &&
+                listParts[i].project !== ""
             ) {
                 projects.push(listParts[i].project);
             }
@@ -185,9 +186,7 @@ export default function Dashboard() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item
-                            onClick={() => setProjectFilter("None")}
-                        >
+                        <Dropdown.Item onClick={() => setProjectFilter("None")}>
                             None
                         </Dropdown.Item>
                         <ProjectFilter
