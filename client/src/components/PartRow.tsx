@@ -7,7 +7,7 @@ type Props = {
     setHotPart: (part: Part) => void;
 };
 
-export default function TableRow({
+export default function PartRow({
     part,
     setPopupPart,
     setHotPart,

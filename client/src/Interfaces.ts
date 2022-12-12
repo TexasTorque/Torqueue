@@ -7,6 +7,7 @@ export interface Part {
     needed: string;
     priority: string;
     notes: string;
+    project: string;
     files: {
         cadExt: string;
         camExt: string;
