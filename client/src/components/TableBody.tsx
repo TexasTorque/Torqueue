@@ -20,13 +20,14 @@ export default function TableBody({
     setShowPopup,
     parts,
     projectFilter,
+    BACKEND_URL,
 }: Props) {
     let includeCompleted = false;
 
-    if (filter === "All machines" || filter === "Select a filter") {
+    if (filter === "All Machines" || filter === "Show All") {
         includeCompleted = false;
         filter = "";
-    } else if (filter === "None") {
+    } else if (filter === "Include Completed") {
         filter = "";
         includeCompleted = true;
     }
@@ -42,7 +43,7 @@ export default function TableBody({
                     part.machine.toLowerCase().includes(filter.toLowerCase())
                 )
                 .filter((part) =>
-                    projectFilter === "None" || projectFilter === "Select a filter"
+                    projectFilter === "Show All"
                         ? true
                         : part.project
                               .toLowerCase()
@@ -60,6 +61,7 @@ export default function TableBody({
                             setPopupPart={setPopupPart}
                             setHotPart={setHotPart}
                             setShowPopup={setShowPopup}
+                            BACKEND_URL={BACKEND_URL}
                         />
                     );
                 })}

@@ -1,7 +1,10 @@
 import { Button } from "react-bootstrap";
 import { Part, Status } from "../Interfaces";
+import axios from "axios";
+
 type Props = {
     part: Part;
+    BACKEND_URL: string;
     setPopupPart: (part: Part) => void;
     setShowPopup: (show: boolean) => void;
     setHotPart: (part: Part) => void;
@@ -12,11 +15,43 @@ export default function PartRow({
     setPopupPart,
     setHotPart,
     setShowPopup,
+    BACKEND_URL,
 }: Props): JSX.Element {
     const manage = (e: any) => {
         e.preventDefault();
         setPopupPart(part);
         setShowPopup(true);
+    };
+
+    const download = async (e: any) => {
+        e.preventDefault();
+        if (part.files.camExt === "") {
+            alert("No GCODE Found");
+            return;
+        }
+
+        let params = {
+            fileId: part.id,
+            fileExt: "cam",
+            name: `${part.name}-GCODE`,
+        };
+
+        await axios({
+            url: `${BACKEND_URL}/downloadPart`,
+            method: "GET",
+            responseType: "blob",
+            params: params,
+        }).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute(
+                "download",
+                `${part.name}-GCODE.${part.files.camExt}`
+            );
+            document.body.appendChild(link);
+            link.click();
+        });
     };
 
     const complete = (e: any) => {
@@ -28,28 +63,32 @@ export default function PartRow({
     };
     return (
         <tr>
-            <td>{part.priority}</td>
-            <td>{part.name}</td>
-            <td>{part.machine}</td>
-            <td>{part.project}</td>
-            <td>{part.material}</td>
-            <td>{Object.values(Status)[part.status < 0 ? 0 : part.status]}</td>
-            <td>{part.needed}</td>
-            <td>
+            <td align="center">{part.priority}</td>
+            <td align="center">{part.name}</td>
+            <td align="center">{part.machine}</td>
+            <td align="center">{part.project}</td>
+            <td align="center">{part.material}</td>
+            <td align="center">
+                {Object.values(Status)[part.status < 0 ? 0 : part.status]}
+            </td>
+            <td align="center">{part.needed}</td>
+            <td align="center">
                 <Button
                     onClick={(e) => complete(e)}
                     className="btn btn-success flex"
-                    style={{
-                        alignItems: "center",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        top: ".5em",
-                    }}
                 >
                     ✓
                 </Button>
             </td>
-            <td className="grid">
+            <td align="center">
+                <button
+                    className="btn btn-primary my-2"
+                    onClick={(e) => download(e)}
+                >
+                    Download
+                </button>
+            </td>
+            <td align="center">
                 <button
                     className="btn btn-primary my-2"
                     onClick={(e) => manage(e)}

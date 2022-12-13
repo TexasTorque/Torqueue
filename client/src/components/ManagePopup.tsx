@@ -57,9 +57,9 @@ export default function ManagePopup({
 
     const openFileSelector = useRef(null);
 
-    let fileUploadExtension = "",
-        initCamExt = "",
-        initCadExt = "";
+    let fileUploadExtension = "";
+
+    let hasUploaded = false;
 
     useEffect(() => {
         previousName.current = name;
@@ -87,14 +87,6 @@ export default function ManagePopup({
     }, [name, machine, status, needed, priority, material, notes, project]);
 
     useEffect(() => {
-        overRideCAD.current = false;
-        overRideCAM.current = false;
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        initCamExt = popupPart.files.camExt;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        initCadExt = popupPart.files.cadExt;
-
         setName(popupPart.name);
         setMachine(popupPart.machine);
         setProject(popupPart.project);
@@ -109,9 +101,11 @@ export default function ManagePopup({
             addPart.current = false;
             setName("");
         } else setPopupName(`Edit ${popupPart.name}`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [popupPart, showPopup]);
 
     const handleFileUpload = async (e: { target: { files: any } }) => {
+        hasUploaded = true;
         const { files } = e.target;
         if (files && files.length) {
             const parts = files[0].name.split(".");
@@ -158,20 +152,21 @@ export default function ManagePopup({
         if (
             selectedFileType === "cad" &&
             popupPart.files.cadExt !== "" &&
-            !overRideCAD
+            !overRideCAD.current
         ) {
             alert(
-                "This Part Already Has A CAD File. Upload A New File To Override The Current One."
+                "This part already has A CAD file. Try to upload again to override the current one."
             );
             overRideCAD.current = true;
             return;
-        } else if (
+        }
+        if (
             selectedFileType === "cam" &&
             popupPart.files.camExt !== "" &&
-            !overRideCAM
+            !overRideCAM.current
         ) {
             alert(
-                "This Part Already Has A CAM File. Upload A New File To Override The Current One."
+                "This part already has A CAM file. Try to upload again to override the current one."
             );
             overRideCAM.current = true;
             return;
@@ -256,8 +251,7 @@ export default function ManagePopup({
             material !== popupPart.material ||
             notes !== popupPart.notes ||
             project !== popupPart.project ||
-            popupPart.files.camExt !== initCamExt ||
-            popupPart.files.cadExt !== initCadExt
+            hasUploaded
         ) {
             setHotPart({
                 id: popupPart.id,

@@ -51,8 +51,8 @@ export default function Dashboard() {
     const [name, setName] = useState("");
     const [projects, setProjects] = useState<string[]>([]);
 
-    const [machineFilter, setMachineFilter] = useState("Select a filter");
-    const [projectFilter, setProjectFilter] = useState("Select a filter");
+    const [machineFilter, setMachineFilter] = useState("Show All");
+    const [projectFilter, setProjectFilter] = useState("Show All");
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -186,8 +186,8 @@ export default function Dashboard() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => setProjectFilter("None")}>
-                            None
+                        <Dropdown.Item onClick={() => setProjectFilter("Show All")}>
+                            Show All
                         </Dropdown.Item>
                         <ProjectFilter
                             projects={projects}
@@ -202,13 +202,13 @@ export default function Dashboard() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => setMachineFilter("None")}>
-                            None
+                        <Dropdown.Item onClick={() => setMachineFilter("Include Completed")}>
+                            Include Completed
                         </Dropdown.Item>
                         <Dropdown.Item
-                            onClick={() => setMachineFilter("All machines")}
+                            onClick={() => setMachineFilter("All Machines")}
                         >
-                            All machines
+                            All Machines
                         </Dropdown.Item>
                         <Dropdown.Item
                             onClick={() => setMachineFilter("Tormach")}
