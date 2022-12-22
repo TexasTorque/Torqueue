@@ -4,7 +4,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useEffect, useState, useRef } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
-import { ProjectFilter } from "../components/ProjectFilter";
+import { ProjectDDMenu } from "../components/ProjectDDMenu";
 import "../index.css";
 import { Part } from "../Interfaces";
 import axios from "axios";
@@ -24,6 +24,7 @@ const defaultPart = {
     priority: "5",
     notes: "",
     project: "",
+    link: "",
     files: { camExt: "", cadExt: "" },
     dev: { delete: false, upload: false, download: false },
 };
@@ -151,15 +152,6 @@ export default function Dashboard() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hotPart]);
 
-    useEffect(() => {
-        const statusKeyboardInput = (e: any) => {
-            if (e.keyCode === 65 && !showPopup) handleAddPart();
-        };
-
-        window.addEventListener("keydown", statusKeyboardInput);
-        return () => window.removeEventListener("keydown", statusKeyboardInput);
-    });
-
     const handleAddPart = () => {
         addPart.current = true;
         setPopupPart(defaultPart);
@@ -186,10 +178,12 @@ export default function Dashboard() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => setProjectFilter("Show All")}>
+                        <Dropdown.Item
+                            onClick={() => setProjectFilter("Show All")}
+                        >
                             Show All
                         </Dropdown.Item>
-                        <ProjectFilter
+                        <ProjectDDMenu
                             projects={projects}
                             setProjectFilter={setProjectFilter}
                         />
@@ -202,7 +196,11 @@ export default function Dashboard() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => setMachineFilter("Include Completed")}>
+                        <Dropdown.Item
+                            onClick={() =>
+                                setMachineFilter("Include Completed")
+                            }
+                        >
                             Include Completed
                         </Dropdown.Item>
                         <Dropdown.Item
@@ -247,7 +245,7 @@ export default function Dashboard() {
                     <h1>Torqueue</h1>
                 </div>
 
-                <div style={{ marginLeft: "auto" }}>
+                <div className="SearchBarDiv">
                     <input
                         type="text"
                         placeholder="Search"

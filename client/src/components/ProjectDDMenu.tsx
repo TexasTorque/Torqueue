@@ -5,7 +5,7 @@ type Props = {
     setProjectFilter: (projectFilter: string) => void;
 };
 
-export const ProjectFilter: Function = ({
+export const ProjectDDMenu: Function = ({
     projects,
     setProjectFilter,
 }: Props): JSX.Element[] => {

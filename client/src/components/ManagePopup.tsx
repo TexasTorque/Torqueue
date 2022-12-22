@@ -35,12 +35,13 @@ export default function ManagePopup({
 }: Props) {
     const [machine, setMachine] = useState(popupPart.machine);
     const [material, setMaterial] = useState(popupPart.machine);
-    const [project, setProject] = useState(popupPart.project);
     let [status, setStatus] = useState(popupPart.status);
     const [needed, setNeeded] = useState(popupPart.needed);
     const [priority, setPriority] = useState(popupPart.priority);
     const [notes, setNotes] = useState(popupPart.notes);
     const [popupName, setPopupName] = useState("");
+    const [link, setLink] = useState(popupPart.link);
+    const [project, setProject] = useState(popupPart.project);
 
     const previousName = useRef("");
     const previousMachine = useRef("");
@@ -50,6 +51,7 @@ export default function ManagePopup({
     const previousNeeded = useRef("");
     const previousPriority = useRef("1");
     const previousNotes = useRef("");
+    const previousLink = useRef("");
     const overRideCAD = useRef(false);
     const overRideCAM = useRef(false);
 
@@ -70,6 +72,7 @@ export default function ManagePopup({
         previousNeeded.current = needed;
         previousPriority.current = priority;
         previousNotes.current = notes;
+        previousLink.current = link;
 
         const statusKeyboardInput = (e: any) => {
             if (e.keyCode === 39) setStatus(++status);
@@ -84,7 +87,17 @@ export default function ManagePopup({
         return () => window.removeEventListener("keydown", statusKeyboardInput);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [name, machine, status, needed, priority, material, notes, project]);
+    }, [
+        name,
+        machine,
+        status,
+        needed,
+        priority,
+        material,
+        notes,
+        project,
+        link,
+    ]);
 
     useEffect(() => {
         setName(popupPart.name);
@@ -95,6 +108,7 @@ export default function ManagePopup({
         setPriority(popupPart.priority);
         setMaterial(popupPart.material);
         setNotes(popupPart.notes);
+        setLink(popupPart.link);
         if (addPart.current) {
             setPopupName("Add A New Part");
             popupPart.id = uuid4();
@@ -190,7 +204,7 @@ export default function ManagePopup({
             name: `${popupPart.name}-${fileType === "cad" ? "CAD" : "GCODE"}`,
         };
 
-        axios({
+        await axios({
             url: `${BACKEND_URL}/downloadPart`,
             method: "GET",
             responseType: "blob",
@@ -227,6 +241,7 @@ export default function ManagePopup({
             needed: needed,
             priority: priority,
             project: project,
+            link: link,
             files: {
                 camExt: popupPart.files.camExt,
                 cadExt: popupPart.files.cadExt,
@@ -251,7 +266,8 @@ export default function ManagePopup({
             material !== popupPart.material ||
             notes !== popupPart.notes ||
             project !== popupPart.project ||
-            hasUploaded
+            hasUploaded ||
+            link !== popupPart.link
         ) {
             setHotPart({
                 id: popupPart.id,
@@ -262,6 +278,7 @@ export default function ManagePopup({
                 needed: needed,
                 priority: priority,
                 project: project,
+                link: link,
                 files: {
                     camExt: popupPart.files.camExt,
                     cadExt: popupPart.files.cadExt,
@@ -287,6 +304,7 @@ export default function ManagePopup({
             priority: "",
             project: "",
             notes: "",
+            link: "",
             files: {
                 camExt: popupPart.files.camExt,
                 cadExt: popupPart.files.cadExt,
@@ -406,7 +424,7 @@ export default function ManagePopup({
                         />
                         <button
                             className={`relative left-2 ${
-                                status > 3 ? "opacity-0" : ""
+                                status > 6 ? "opacity-0" : ""
                             }`}
                             onClick={(e) => {
                                 e.preventDefault();
@@ -417,6 +435,18 @@ export default function ManagePopup({
                         </button>
                         <br />
                         <br />
+
+                        <div className={` ${status === 1 ? "" : "hidden"}`}>
+                            <label className="Popup">Link: </label>
+                            <input
+                                type="text"
+                                className={`form-control Popup w-50 BlackTextBox relative left-4`}
+                                value={link}
+                                onChange={(e) => setLink(e.target.value)}
+                            />
+                            <br />
+                            <br />
+                        </div>
 
                         <div className="btn-group ">
                             <label className="Popup">Remaining: </label>

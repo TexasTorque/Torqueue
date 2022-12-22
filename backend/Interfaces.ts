@@ -12,5 +12,6 @@ export interface Part {
     needed: string;
     priority: string;
     files: Files;
+    link: string;
     dev: {delete: boolean, upload: boolean, download: boolean};
 }

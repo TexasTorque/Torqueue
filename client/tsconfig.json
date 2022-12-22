@@ -16,8 +16,9 @@
         "noEmit": true,
         "jsx": "react-jsx",
         "suppressImplicitAnyIndexErrors": true,
-        "strictNullChecks":false,
-        "strictPropertyInitialization": false,
+        "ignoreDeprecations": "5.0",
+        "strictNullChecks": false,
+        "strictPropertyInitialization": false
     },
     "include": ["src"]
 }
