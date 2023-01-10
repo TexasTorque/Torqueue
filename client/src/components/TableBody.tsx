@@ -1,5 +1,5 @@
 import PartRow from "./PartRow";
-import { Part } from "../Interfaces";
+import { Part, Status } from "../Interfaces";
 
 type Props = {
     searchQuery: string;
@@ -31,7 +31,7 @@ export default function TableBody({
         filter = "";
         includeCompleted = true;
     }
-
+    console.log(Object.keys(Status).indexOf('COMPLETE'));
     return parts === null ? (
         <tr>
             <td>Loading...</td>
@@ -49,7 +49,7 @@ export default function TableBody({
                               .toLowerCase()
                               .includes(projectFilter.toLowerCase())
                 )
-                .filter((part) => (includeCompleted ? true : part.status !== 5))
+                .filter((part) => (includeCompleted ? true : part.status !== Object.keys(Status).indexOf('COMPLETE')))
                 .filter((part) =>
                     part.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
