@@ -103,13 +103,8 @@ body {
     color: white;
     font-family: "Market_Deco";
     font-size: 2em;
-    position: relative;
+    
 }
-/*@media only screen and (min-width: 1000px) {
-    .TextCenterDiv {
-        left: 8%;
-    }
-}*/
 
 @media only screen and (max-width: 1000px) {
     .SearchBar {
@@ -117,11 +112,6 @@ body {
     }
 }
 
-@media only screen and (min-width: 1500px) {
-    .TextCenterDiv {
-        left: 7%;
-    }
-}
 .SearchBar {
     border: 1px solid blue;
 }

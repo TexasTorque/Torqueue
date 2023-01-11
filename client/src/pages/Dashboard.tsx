@@ -4,7 +4,6 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useEffect, useState, useRef } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
-import { ProjectDDMenu } from "../components/ProjectDDMenu";
 import "../index.css";
 import { Part } from "../Interfaces";
 import axios from "axios";
@@ -13,6 +12,7 @@ import torqueLogo from "../imgs/torqueLogo.png";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { firebaseConfig } from "../keys";
+import ProjectDropdown from "../components/ProjectDropdown";
 
 const defaultPart = {
     id: "",
@@ -61,30 +61,32 @@ export default function Dashboard() {
 
     const getParts = async () => {
         let responseJSON: any;
-        let listParts = [] as Part[];
+        let partsList = [] as Part[];
         await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
             responseJSON = data.data[1];
         });
 
-        for (let part in responseJSON) listParts.push(responseJSON[part]);
+        for (let part in responseJSON) partsList.push(responseJSON[part]);
+        const lowerCaseParts = partsList.map((v) => v.project.toLowerCase());
 
-        for (let i = 0; i < listParts.length; i++) {
+        for (let i = 0; i < partsList.length; i++) {
+            const lowerCaseProjects = projects.map((v) => v.toLowerCase());
             if (
-                !projects.includes(listParts[i].project) &&
-                listParts[i].project !== undefined &&
-                listParts[i].project !== ""
+                !lowerCaseProjects.includes(lowerCaseParts[i]) &&
+                lowerCaseParts[i] !== undefined &&
+                lowerCaseParts[i] !== ""
             ) {
-                projects.push(listParts[i].project);
+                projects.push(partsList[i].project);
             }
         }
 
         setProjects(projects);
 
-        listParts.sort((a, b) => {
+        partsList.sort((a, b) => {
             return numberSortArray(a.priority, b.priority);
         });
 
-        setParts(listParts);
+        setParts(partsList);
     };
 
     useEffect(() => {
@@ -183,10 +185,13 @@ export default function Dashboard() {
                         >
                             Show All
                         </Dropdown.Item>
-                        <ProjectDDMenu
-                            projects={projects}
-                            setProjectFilter={setProjectFilter}
-                        />
+                        {projects.map((project: string, id: number) => (
+                            <ProjectDropdown
+                                key={id}
+                                project={project}
+                                setProjectFilter={setProjectFilter}
+                            />
+                        ))}
                     </Dropdown.Menu>
                 </Dropdown>
                 <h2 className="flex pl-3">Machine: </h2>
@@ -228,23 +233,15 @@ export default function Dashboard() {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
-
-                <div
-                    className="flex TextCenterDiv"
-                    style={{
-                        alignItems: "center",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                    }}
-                >
-                    <img
-                        src={torqueLogo}
-                        alt="TorqueueLogo"
-                        className="h-12"
-                    ></img>
-                    <h1>Torqueue</h1>
-                </div>
-
+                <img
+                    src={torqueLogo}
+                    alt="TorqueueLogo"
+                    className="h-12"
+                    style={{ marginLeft: "auto", paddingLeft: "1em" }}
+                ></img>
+                <h1 className="TextCenterDiv" style={{ marginRight: "auto" }}>
+                    Torqueue
+                </h1>
                 <div className="SearchBarDiv">
                     <input
                         type="text"
