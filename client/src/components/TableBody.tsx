@@ -31,7 +31,6 @@ export default function TableBody({
         filter = "";
         includeCompleted = true;
     }
-    console.log(Object.keys(Status).indexOf('COMPLETE'));
     return parts === null ? (
         <tr>
             <td>Loading...</td>
@@ -49,7 +48,12 @@ export default function TableBody({
                               .toLowerCase()
                               .includes(projectFilter.toLowerCase())
                 )
-                .filter((part) => (includeCompleted ? true : part.status !== Object.keys(Status).indexOf('COMPLETE')))
+                .filter((part) =>
+                    includeCompleted
+                        ? true
+                        : part.status !==
+                          Object.keys(Status).indexOf("COMPLETE")
+                )
                 .filter((part) =>
                     part.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )

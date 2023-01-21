@@ -378,6 +378,11 @@ export default function ManagePopup({
                                 >
                                     Lathe
                                 </Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={() => setMachine("Lathe")}
+                                >
+                                    Mini Mill
+                                </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 

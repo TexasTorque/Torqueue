@@ -17,7 +17,7 @@ import ProjectDropdown from "../components/ProjectDropdown";
 const defaultPart = {
     id: "",
     name: "",
-    status: 0,
+    status: 4,
     machine: "",
     material: "",
     needed: "0",
@@ -230,6 +230,11 @@ export default function Dashboard() {
                             onClick={() => setMachineFilter("Lathe")}
                         >
                             Lathe
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={() => setMachineFilter("Lathe")}
+                        >
+                            Mini Mill
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
