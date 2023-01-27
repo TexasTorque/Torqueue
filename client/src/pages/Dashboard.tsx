@@ -56,31 +56,17 @@ export default function Dashboard() {
     const [projectFilter, setProjectFilter] = useState("Show All");
 
     const [searchQuery, setSearchQuery] = useState("");
+    let responseJSON: any;
+    let partsList = [] as Part[];
 
     let addPart = useRef(false);
 
     const getParts = async () => {
-        let responseJSON: any;
-        let partsList = [] as Part[];
         await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
             responseJSON = data.data[1];
         });
 
-        for (let part in responseJSON) partsList.push(responseJSON[part]);
-        const lowerCaseParts = partsList.map((v) => v.project.toLowerCase());
-
-        for (let i = 0; i < partsList.length; i++) {
-            const lowerCaseProjects = projects.map((v) => v.toLowerCase());
-            if (
-                !lowerCaseProjects.includes(lowerCaseParts[i]) &&
-                lowerCaseParts[i] !== undefined &&
-                lowerCaseParts[i] !== ""
-            ) {
-                projects.push(partsList[i].project);
-            }
-        }
-
-        setProjects(projects);
+        getProjects();
 
         partsList.sort((a, b) => {
             return numberSortArray(a.priority, b.priority);
@@ -97,6 +83,31 @@ export default function Dashboard() {
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getProjects = async () => {
+        for (let part in responseJSON) partsList.push(responseJSON[part]);
+        const lowerCaseParts = partsList.map((v) => v.project.toLowerCase());
+
+        for (let i = 0; i < partsList.length; i++) {
+            const lowerCaseProjects = projects.map((v) => v.toLowerCase());
+            if (
+                !lowerCaseProjects.includes(lowerCaseParts[i]) &&
+                lowerCaseParts[i] !== undefined &&
+                lowerCaseParts[i] !== "" && machineFilter === "Include Completed" ? true : partsList[i].status !== 7
+            ) {
+                
+                
+                projects.push(partsList[i].project);
+            }
+        }
+
+        setProjects(projects);
+    };
+
+    useEffect(() => {
+        getProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [machineFilter]);
 
     useEffect(() => {
         const handleAsync = async () => {
@@ -232,7 +243,7 @@ export default function Dashboard() {
                             Lathe
                         </Dropdown.Item>
                         <Dropdown.Item
-                            onClick={() => setMachineFilter("Lathe")}
+                            onClick={() => setMachineFilter("Mini Mill")}
                         >
                             Mini Mill
                         </Dropdown.Item>
