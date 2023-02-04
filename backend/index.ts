@@ -27,6 +27,9 @@ if (production) {
 const storage = multer.memoryStorage();
 const upload = multer({
     storage: storage,
+    limits: {
+        fieldSize: 50 * 1024 * 1024,
+    },
 });
 
 app.use(json());
