@@ -38,6 +38,7 @@
 
 body {
     background-color: rgb(24, 26, 27) !important;
+    overflow: hidden;
 }
 
 .TableGrandParent {
@@ -65,6 +66,14 @@ body {
     background: #000000;
     color: white;
     z-index: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.TorqueueLogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .navbar a {
@@ -103,13 +112,43 @@ body {
     color: white;
     font-family: "Market_Deco";
     font-size: 2em;
-    
 }
 
 @media only screen and (max-width: 1000px) {
     .SearchBar {
         width: 9em;
     }
+}
+
+@media only screen and (min-width: 1500px) {
+    .CenterImage {
+        padding-left: 13em;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .CenterImage {
+        margin-left: auto;
+        padding-left: 3em;
+    }
+
+    .SearchBar {
+        display: none;
+    }
+
+    .Filter {
+        font-size: 0em;
+    }
+
+    .TextCenterDiv {
+        font-size: 0em;
+    }
+}
+
+.CenterImage {
+    margin-left: auto;
+
+    height: 3em;
 }
 
 .SearchBar {

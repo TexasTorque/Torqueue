@@ -52,8 +52,9 @@ export default function Dashboard() {
     const [name, setName] = useState("");
     const [projects, setProjects] = useState<string[]>([]);
 
-    const [machineFilter, setMachineFilter] = useState("Show All");
-    const [projectFilter, setProjectFilter] = useState("Show All");
+    const [machineFilter, setMachineFilter] = useState("All");
+    const [projectFilter, setProjectFilter] = useState("All");
+    const [filter, setFilter] = useState("✓");
 
     const [searchQuery, setSearchQuery] = useState("");
     let responseJSON: any;
@@ -93,11 +94,16 @@ export default function Dashboard() {
             if (
                 !lowerCaseProjects.includes(lowerCaseParts[i]) &&
                 lowerCaseParts[i] !== undefined &&
-                lowerCaseParts[i] !== "" && machineFilter === "Include Completed" ? true : partsList[i].status !== 7
+                lowerCaseParts[i] !== "" &&
+                partsList[i].project !== "" &&
+                partsList[i].project.length !== 0 &&
+                machineFilter === "Include Completed"
+                    ? true
+                    : partsList[i].status !== 7 &&
+                      !projects.includes(partsList[i].project)
             ) {
-                
-                
-                projects.push(partsList[i].project);
+                if (partsList[i].project.length !== 0)
+                    projects.push(partsList[i].project);
             }
         }
 
@@ -106,7 +112,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         getProjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [machineFilter]);
 
     useEffect(() => {
@@ -184,16 +190,14 @@ export default function Dashboard() {
                 {alert.message}
             </div>
             <div className="fixed-top navbar NavHead flex">
-                <h2 className="flex pl-3">Project: </h2>
+                <h2 className="flex pl-3 Filter">Project: </h2>
                 <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
                     <Dropdown.Toggle variant="success">
                         {projectFilter}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item
-                            onClick={() => setProjectFilter("Show All")}
-                        >
+                        <Dropdown.Item onClick={() => setProjectFilter("All")}>
                             Show All
                         </Dropdown.Item>
                         {projects.map((project: string, id: number) => (
@@ -205,23 +209,14 @@ export default function Dashboard() {
                         ))}
                     </Dropdown.Menu>
                 </Dropdown>
-                <h2 className="flex pl-3">Machine: </h2>
+                <h2 className="flex pl-3 Filter">Machine: </h2>
                 <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
                     <Dropdown.Toggle variant="success">
                         {machineFilter}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item
-                            onClick={() =>
-                                setMachineFilter("Include Completed")
-                            }
-                        >
-                            Include Completed
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                            onClick={() => setMachineFilter("All Machines")}
-                        >
+                        <Dropdown.Item onClick={() => setMachineFilter("All")}>
                             All Machines
                         </Dropdown.Item>
                         <Dropdown.Item
@@ -249,15 +244,30 @@ export default function Dashboard() {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
+                <h2 className="flex pl-3 Filter">Filter: </h2>
+                <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
+                    <Dropdown.Toggle variant="success">
+                        {filter}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => setFilter("✓")}>
+                            Hide Completed
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => setFilter("X")}>
+                            Show Completed
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
                 <img
                     src={torqueLogo}
                     alt="TorqueueLogo"
-                    className="h-12"
-                    style={{ marginLeft: "auto", paddingLeft: "1em" }}
+                    className="CenterImage"
                 ></img>
                 <h1 className="TextCenterDiv" style={{ marginRight: "auto" }}>
                     Torqueue
                 </h1>
+
                 <div className="SearchBarDiv">
                     <input
                         type="text"
@@ -284,11 +294,12 @@ export default function Dashboard() {
                                     setPopupPart={setPopupPart}
                                     setHotPart={setHotPart}
                                     searchQuery={searchQuery}
-                                    filter={machineFilter}
+                                    machineFilter={machineFilter}
                                     setShowPopup={setShowPopup}
                                     BACKEND_URL={BACKEND_URL}
                                     parts={parts}
                                     projectFilter={projectFilter}
+                                    filter={filter}
                                 />
                             </tbody>
                         </Table>

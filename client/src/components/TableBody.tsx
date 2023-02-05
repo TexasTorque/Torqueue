@@ -3,10 +3,11 @@ import { Part, Status } from "../Interfaces";
 
 type Props = {
     searchQuery: string;
-    filter: string;
+    machineFilter: string;
     BACKEND_URL: string;
     parts: Part[];
     projectFilter: string;
+    filter: string;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
     setPopupPart: (hotPart: Part) => void;
@@ -16,21 +17,15 @@ export default function TableBody({
     setPopupPart,
     setHotPart,
     searchQuery,
-    filter,
+    machineFilter,
     setShowPopup,
     parts,
     projectFilter,
     BACKEND_URL,
+    filter,
 }: Props) {
-    let includeCompleted = false;
+    if (machineFilter === "All") machineFilter = "";
 
-    if (filter === "All Machines" || filter === "Show All") {
-        includeCompleted = false;
-        filter = "";
-    } else if (filter === "Include Completed") {
-        filter = "";
-        includeCompleted = true;
-    }
     return parts === null ? (
         <tr>
             <td>Loading...</td>
@@ -39,24 +34,28 @@ export default function TableBody({
         <>
             {parts
                 .filter((part) =>
-                    part.machine.toLowerCase().includes(filter.toLowerCase())
+                    part.machine
+                        .toLowerCase()
+                        .includes(machineFilter.toLowerCase())
                 )
                 .filter((part) =>
-                    projectFilter === "Show All"
+                    projectFilter === "All"
                         ? true
-                        : part.project
-                              .toLowerCase()
-                              .includes(projectFilter.toLowerCase())
+                        : part.project.toLowerCase() ===
+                          projectFilter.toLowerCase()
                 )
-                .filter((part) =>
-                    includeCompleted
-                        ? true
-                        : part.status !==
-                          Object.keys(Status).indexOf("COMPLETE")
-                )
+
                 .filter((part) =>
                     part.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
+                .filter((part) =>
+                    filter === "✓"
+                        ? parseInt(part.needed) !== 0 &&
+                          part.status !==
+                              Object.keys(Status).indexOf("COMPLETE")
+                        : true
+                )
+
                 .map((part: Part, id: number) => {
                     return (
                         <PartRow

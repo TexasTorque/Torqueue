@@ -58,7 +58,10 @@ export default function PartRow({
         e.preventDefault();
         if (parseInt(part.needed) > 0)
             part.needed = parseInt(part.needed) - 1 + "";
-        if (part.needed === "0") part.status++;
+
+        if (parseInt(part.needed) === 0)
+            part.status = Object.keys(Status).indexOf("COMPLETE");
+            
         setHotPart(part);
     };
     return (
