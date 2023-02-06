@@ -50,7 +50,7 @@ export default function Dashboard() {
     const [hotPart, setHotPart] = useState<Part>(defaultPart);
     const [parts, setParts] = useState<Part[]>(null);
     const [name, setName] = useState("");
-    const [projects, setProjects] = useState<string[]>([]);
+    let [projects, setProjects] = useState<string[]>([]);
 
     const [machineFilter, setMachineFilter] = useState("All");
     const [projectFilter, setProjectFilter] = useState("All");
@@ -86,26 +86,22 @@ export default function Dashboard() {
     }, []);
 
     const getProjects = async () => {
+        partsList = [];
         for (let part in responseJSON) partsList.push(responseJSON[part]);
-        const lowerCaseParts = partsList.map((v) => v.project.toLowerCase());
+        partsList = partsList
+            .filter((v) => v.status !== 7)
+            .filter((v) => parseInt(v.needed) !== 0);
+        projects = partsList.map((v) => v.project);
 
-        for (let i = 0; i < partsList.length; i++) {
-            const lowerCaseProjects = projects.map((v) => v.toLowerCase());
-            if (
-                !lowerCaseProjects.includes(lowerCaseParts[i]) &&
-                lowerCaseParts[i] !== undefined &&
-                lowerCaseParts[i] !== "" &&
-                partsList[i].project !== "" &&
-                partsList[i].project.length !== 0 &&
-                machineFilter === "Include Completed"
-                    ? true
-                    : partsList[i].status !== 7 &&
-                      !projects.includes(partsList[i].project)
-            ) {
-                if (partsList[i].project.length !== 0)
-                    projects.push(partsList[i].project);
-            }
-        }
+        projects = projects
+            .filter(
+                (part, index, self) =>
+                    index ===
+                    self.findIndex(
+                        (t) => t.toLowerCase() === part.toLowerCase()
+                    )
+            )
+            .filter((v) => v !== "");
 
         setProjects(projects);
     };
