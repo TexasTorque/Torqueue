@@ -20,7 +20,7 @@ const defaultPart = {
     status: 4,
     machine: "",
     material: "",
-    needed: "0",
+    needed: "1",
     priority: "5",
     notes: "",
     project: "",
@@ -87,11 +87,12 @@ export default function Dashboard() {
 
     const getProjects = async () => {
         partsList = [];
+        let localPartsList = [];
         for (let part in responseJSON) partsList.push(responseJSON[part]);
-        partsList = partsList
-            .filter((v) => v.status !== 7)
-            .filter((v) => parseInt(v.needed) !== 0);
-        projects = partsList.map((v) => v.project);
+        localPartsList = partsList
+            .filter((v) => (filter === "✓" ? v.status !== 7 : true))
+            .filter((v) => (filter === "✓" ? parseInt(v.needed) !== 0 : true));
+        projects = localPartsList.map((v) => v.project);
 
         projects = projects
             .filter(
@@ -109,7 +110,7 @@ export default function Dashboard() {
     useEffect(() => {
         getProjects();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [machineFilter]);
+    }, [machineFilter, filter]);
 
     useEffect(() => {
         const handleAsync = async () => {
