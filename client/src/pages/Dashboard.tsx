@@ -62,6 +62,14 @@ export default function Dashboard() {
 
     let addPart = useRef(false);
 
+    let firstRun = useRef(true);
+
+    useEffect(() => {
+        if (localStorage.getItem("machineFilter")) {
+            setMachineFilter(localStorage.getItem("machineFilter"));
+        }
+    }, []);
+
     const getParts = async () => {
         await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
             responseJSON = data.data[1];
@@ -84,6 +92,14 @@ export default function Dashboard() {
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (firstRun.current && localStorage.getItem("machineFilter")) {
+            setMachineFilter(localStorage.getItem("machineFilter"));
+            firstRun.current = false;
+        } else localStorage.setItem("machineFilter", machineFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [machineFilter]);
 
     const getProjects = async () => {
         partsList = [];
