@@ -42,14 +42,18 @@ export default function ManagePopup({
     const [popupName, setPopupName] = useState("");
     const [link, setLink] = useState(popupPart.link);
     const [project, setProject] = useState(popupPart.project);
+    const [endmill, setEndmill] = useState(popupPart.endmill);
+    const [creator, setCreator] = useState(popupPart.creator);
 
     const previousName = useRef("");
     const previousMachine = useRef("");
+    const previousEndmill = useRef("");
     const previousProject = useRef("");
     const previousMaterial = useRef("");
     const previousStatus = useRef(0);
     const previousNeeded = useRef("");
     const previousPriority = useRef("1");
+    const previousCreator = useRef("");
     const previousNotes = useRef("");
     const previousLink = useRef("");
     const overRideCAD = useRef(false);
@@ -73,6 +77,8 @@ export default function ManagePopup({
         previousPriority.current = priority;
         previousNotes.current = notes;
         previousLink.current = link;
+        previousEndmill.current = endmill;
+        previousCreator.current = creator;
 
         const statusKeyboardInput = (e: any) => {
             if (e.keyCode === 39) setStatus(++status);
@@ -97,11 +103,14 @@ export default function ManagePopup({
         notes,
         project,
         link,
+        endmill,
+        creator,
     ]);
 
     useEffect(() => {
         setName(popupPart.name);
         setMachine(popupPart.machine);
+        setEndmill(popupPart.endmill);
         setProject(popupPart.project);
         setStatus(popupPart.status);
         setNeeded(popupPart.needed);
@@ -109,8 +118,9 @@ export default function ManagePopup({
         setMaterial(popupPart.material);
         setNotes(popupPart.notes);
         setLink(popupPart.link);
+        setCreator(popupPart.creator);
         if (addPart.current) {
-            setPopupName("Add A New Part");
+            setPopupName("Add a Part");
             popupPart.id = uuid4();
             addPart.current = false;
             setName("");
@@ -185,8 +195,6 @@ export default function ManagePopup({
             overRideCAM.current = true;
             return;
         }
-
-        openFileSelector.current["click"]();
     };
 
     const handleFileDownload = async (fileType: string) => {
@@ -232,15 +240,22 @@ export default function ManagePopup({
             return;
         }
 
+        if (creator === "") {
+            alert("Please provide a creator");
+            return;
+        }
+
         setHotPart({
             id: popupPart.id,
             name: name,
             status: status,
             material: material,
             machine: machine,
+            endmill: endmill,
             needed: needed,
             priority: priority,
             project: project,
+            creator: creator,
             link: link,
             files: {
                 camExt: popupPart.files.camExt,
@@ -257,6 +272,21 @@ export default function ManagePopup({
             return;
         }
 
+        if (creator === "") {
+            alert("Please provide a creator");
+            return;
+        }
+
+        if (machine === "") {
+            alert("Please provide a machine");
+            return;
+        }
+
+        if (material === "") {
+            alert("Please provide a material");
+            return;
+        }
+
         if (
             name !== popupPart.name ||
             machine !== popupPart.machine ||
@@ -267,16 +297,20 @@ export default function ManagePopup({
             notes !== popupPart.notes ||
             project !== popupPart.project ||
             hasUploaded ||
-            link !== popupPart.link
+            link !== popupPart.link ||
+            creator !== popupPart.creator ||
+            endmill !== popupPart.endmill
         ) {
             setHotPart({
                 id: popupPart.id,
                 name: name,
                 status: status,
                 material: material,
+                endmill: endmill,
                 machine: machine,
                 needed: needed,
                 priority: priority,
+                creator: creator,
                 project: project,
                 link: link,
                 files: {
@@ -300,8 +334,10 @@ export default function ManagePopup({
             status: 0,
             material: "",
             machine: "",
+            endmill: "",
             needed: "",
             priority: "",
+            creator: "",
             project: "",
             notes: "",
             link: "",
@@ -383,6 +419,11 @@ export default function ManagePopup({
                                 >
                                     Mini Mill
                                 </Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={() => setMachine("Any")}
+                                >
+                                    Any
+                                </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 
@@ -403,6 +444,27 @@ export default function ManagePopup({
                             value={material}
                             onChange={(e) => setMaterial(e.target.value)}
                         />
+                        <br />
+
+                        <div className={` ${status === 4 ? "" : "hidden"}`}>
+                            <label className="Popup">Endmill: </label>
+                            <input
+                                type="text"
+                                className="form-control Popup w-50 BlackTextBox relative left-4"
+                                value={endmill}
+                                onChange={(e) => setEndmill(e.target.value)}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="Popup">Creator: </label>
+                            <input
+                                type="text"
+                                className="form-control Popup w-50 BlackTextBox relative left-4"
+                                value={creator}
+                                onChange={(e) => setCreator(e.target.value)}
+                            />
+                        </div>
 
                         <br />
                         <label className="Popup">Status: </label>
@@ -455,10 +517,12 @@ export default function ManagePopup({
 
                         <div className="btn-group ">
                             <label className="Popup">Remaining: </label>
+
                             <input
                                 type="button"
                                 value="-"
-                                className="btn btn-danger left-9"
+                                className="btn btn-danger"
+                                style={{ position: "relative", left: "3.25em" }}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     const value =
@@ -469,8 +533,9 @@ export default function ManagePopup({
 
                             <input
                                 type="text"
-                                className="outline outline-1 w-20 text-center relative left-10 text-black BlackTextBox"
+                                className="outline outline-1 w-20 text-center relative text-black BlackTextBox"
                                 value={needed}
+                                style={{ position: "relative", left: "3.75em" }}
                                 onChange={(e) => {
                                     e.preventDefault();
                                     setNeeded(e.target.value);
@@ -480,7 +545,8 @@ export default function ManagePopup({
                             <input
                                 type="button"
                                 value="+"
-                                className="btn btn-success left-11 rounded-sm"
+                                className="btn btn-success rounded-sm"
+                                style={{ position: "relative", left: "4.25em" }}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     const value =
@@ -497,7 +563,8 @@ export default function ManagePopup({
                             <input
                                 type="button"
                                 value="-"
-                                className="btn btn-danger left-9"
+                                className="btn btn-danger"
+                                style={{ position: "relative", left: "3.25em" }}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     const value =
@@ -510,7 +577,8 @@ export default function ManagePopup({
 
                             <input
                                 type="text"
-                                className="outline outline-1 w-20 text-center relative left-10 text-black BlackTextBox"
+                                className="outline outline-1 w-20 text-center relative text-black BlackTextBox"
+                                style={{ position: "relative", left: "3.75em" }}
                                 value={priority}
                                 onChange={(e) => {
                                     e.preventDefault();
@@ -521,7 +589,8 @@ export default function ManagePopup({
                             <input
                                 type="button"
                                 value="+"
-                                className="btn btn-success left-11 rounded-sm"
+                                className="btn btn-success rounded-sm"
+                                style={{ position: "relative", left: "4.25em" }}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     const value =
@@ -602,7 +671,7 @@ export default function ManagePopup({
                 <Modal.Footer className="bg-black">
                     <Button
                         variant="secondary"
-                        className="btn btn-danger absolute left-0"
+                        className="btn btn-danger absolute left-3"
                         onClick={(e) => {
                             e.preventDefault();
                             deletePart();

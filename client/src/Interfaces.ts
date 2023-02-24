@@ -4,11 +4,13 @@ export interface Part {
     status: number;
     material: string;
     machine: string;
+    endmill: string;
     needed: string;
     priority: string;
     notes: string;
     project: string;
     link: string;
+    creator: string;
     files: {
         cadExt: string;
         camExt: string;

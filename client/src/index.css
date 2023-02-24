@@ -44,7 +44,7 @@ body {
 .TableGrandParent {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 93vh;
     overflow: hidden;
 }
 
@@ -118,6 +118,16 @@ body {
     .SearchBar {
         width: 9em;
     }
+}
+
+.ManagePopup {
+    filter: blur(1.5em);
+}
+
+.modal-dialog {
+    outline-style: solid;
+    outline-width: .5px;
+    outline-color: white;
 }
 
 @media only screen and (min-width: 1500px) {

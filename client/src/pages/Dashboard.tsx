@@ -19,6 +19,8 @@ const defaultPart = {
     name: "",
     status: 4,
     machine: "",
+    endmill: "",
+    creator: "",
     material: "",
     needed: "1",
     priority: "5",
@@ -98,7 +100,7 @@ export default function Dashboard() {
             setMachineFilter(localStorage.getItem("machineFilter"));
             firstRun.current = false;
         } else localStorage.setItem("machineFilter", machineFilter);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [machineFilter]);
 
     const getProjects = async () => {
@@ -254,6 +256,11 @@ export default function Dashboard() {
                             onClick={() => setMachineFilter("Mini Mill")}
                         >
                             Mini Mill
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={() => setMachineFilter("Any")}
+                        >
+                            Any
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>

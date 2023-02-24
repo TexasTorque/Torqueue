@@ -61,16 +61,22 @@ export default function PartRow({
 
         if (parseInt(part.needed) === 0)
             part.status = Object.keys(Status).indexOf("COMPLETE");
-            
+
         setHotPart(part);
     };
+
     return (
         <tr>
             <td align="center">{part.priority}</td>
             <td align="center">{part.name}</td>
+            <td align="center">{part.project === "" ? "N/A" : part.project}</td>
             <td align="center">{part.machine}</td>
-            <td align="center">{part.project}</td>
             <td align="center">{part.material}</td>
+            <td align="center">
+                {part.endmill === undefined || part.endmill.length === 0
+                    ? "X"
+                    : part.endmill}
+            </td>
             <td align="center">
                 {Object.values(Status)[part.status < 0 ? 0 : part.status]}
             </td>
@@ -88,7 +94,7 @@ export default function PartRow({
                     className="btn btn-primary my-2"
                     onClick={(e) => download(e)}
                 >
-                    Download
+                    ↓
                 </button>
             </td>
             <td align="center">
@@ -96,7 +102,7 @@ export default function PartRow({
                     className="btn btn-primary my-2"
                     onClick={(e) => manage(e)}
                 >
-                    Manage
+                    ⚙︎
                 </button>
             </td>
         </tr>
