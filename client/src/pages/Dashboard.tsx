@@ -104,12 +104,21 @@ export default function Dashboard() {
     }, [machineFilter]);
 
     const getProjects = async () => {
+        await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
+            responseJSON = data.data[1];
+        });
+        partsList.sort((a, b) => {
+            return numberSortArray(a.priority, b.priority);
+        });
+
         partsList = [];
         let localPartsList = [];
         for (let part in responseJSON) partsList.push(responseJSON[part]);
+
         localPartsList = partsList
             .filter((v) => (filter === "✓" ? v.status !== 7 : true))
             .filter((v) => (filter === "✓" ? parseInt(v.needed) !== 0 : true));
+
         projects = localPartsList.map((v) => v.project);
 
         projects = projects
@@ -132,6 +141,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         const handleAsync = async () => {
+            // This is why it'll randomly update a part. It doesn't reset hotpart
             if (hotPart.id === "" || hotPart.name === "") return;
 
             let deleteStatus = "success",
@@ -257,9 +267,7 @@ export default function Dashboard() {
                         >
                             Mini Mill
                         </Dropdown.Item>
-                        <Dropdown.Item
-                            onClick={() => setMachineFilter("Any")}
-                        >
+                        <Dropdown.Item onClick={() => setMachineFilter("Any")}>
                             Any
                         </Dropdown.Item>
                     </Dropdown.Menu>

@@ -44,7 +44,6 @@ export default function TableBody({
                         : part.project.toLowerCase() ===
                           projectFilter.toLowerCase()
                 )
-
                 .filter((part) =>
                     part.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
