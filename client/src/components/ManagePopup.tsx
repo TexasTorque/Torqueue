@@ -195,6 +195,7 @@ export default function ManagePopup({
             overRideCAM.current = true;
             return;
         }
+        openFileSelector.current["click"]();
     };
 
     const handleFileDownload = async (fileType: string) => {
