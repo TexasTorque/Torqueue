@@ -45,6 +45,8 @@ export default function ManagePopup({
     const [endmill, setEndmill] = useState(popupPart.endmill);
     const [creator, setCreator] = useState(popupPart.creator);
 
+    const [loading, setLoading] = useState(false);
+
     const previousName = useRef("");
     const previousMachine = useRef("");
     const previousEndmill = useRef("");
@@ -129,6 +131,7 @@ export default function ManagePopup({
     }, [popupPart, showPopup]);
 
     const handleFileUpload = async (e: { target: { files: any } }) => {
+        setLoading(true);
         hasUploaded = true;
         const { files } = e.target;
         if (files && files.length) {
@@ -153,6 +156,7 @@ export default function ManagePopup({
             });
 
             if (request.data === "success") {
+                setLoading(false);
                 setAlert({
                     show: true,
                     message: "File Successfully Uploaded",
@@ -353,12 +357,23 @@ export default function ManagePopup({
 
     return (
         <>
+            <div
+                className={`${loading ? "loader" : "hide"}`}
+                style={{
+                    position: "absolute",
+                    left: "45%",
+                    
+                    top: "50%",
+                    zIndex: 9999,
+                }}
+            ></div>
             <Modal
                 show={showPopup}
                 onHide={() => {
                     setPopupPart(defaultPart);
                     setShowPopup(false);
                 }}
+                className={` ${loading ? "blur" : ""}`}
             >
                 <Modal.Header closeButton className="bg-black text-white">
                     <Modal.Title>{popupName}</Modal.Title>
@@ -373,300 +388,284 @@ export default function ManagePopup({
                     </button>
                 </Modal.Header>
                 <Modal.Body className="bg-black text-white">
-                    <div className="">
-                        <label className="Popup">Name: </label>
-                        <input
-                            type="text"
-                            autoFocus
-                            className="form-control Popup w-50 BlackTextBox relative left-4"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        <br />
-                        <br />
+                    <label className="Popup">Name: </label>
+                    <input
+                        type="text"
+                        autoFocus
+                        className="form-control Popup w-50 BlackTextBox relative left-4"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    <br />
+                    <br />
 
-                        <label className="Popup">Machine: </label>
-                        <Dropdown>
-                            <Dropdown.Toggle
-                                variant="primary"
-                                className="ManagePopupDropdown"
+                    <label className="Popup">Machine: </label>
+                    <Dropdown>
+                        <Dropdown.Toggle
+                            variant="primary"
+                            className="ManagePopupDropdown"
+                        >
+                            {machine}
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu className="ManagePopupDropdownMenu">
+                            <Dropdown.Item
+                                onClick={() => setMachine("Tormach")}
                             >
-                                {machine}
-                            </Dropdown.Toggle>
+                                Tormach
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setMachine("Nebula")}>
+                                Nebula
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setMachine("Omio")}>
+                                Omio
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setMachine("Lathe")}>
+                                Lathe
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                                onClick={() => setMachine("Mini Mill")}
+                            >
+                                Mini Mill
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setMachine("Any")}>
+                                Any
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
 
-                            <Dropdown.Menu className="ManagePopupDropdownMenu">
-                                <Dropdown.Item
-                                    onClick={() => setMachine("Tormach")}
-                                >
-                                    Tormach
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => setMachine("Nebula")}
-                                >
-                                    Nebula
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => setMachine("Omio")}
-                                >
-                                    Omio
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => setMachine("Lathe")}
-                                >
-                                    Lathe
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => setMachine("Mini Mill")}
-                                >
-                                    Mini Mill
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => setMachine("Any")}
-                                >
-                                    Any
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                    <br />
+                    <label className="Popup">Project: </label>
+                    <input
+                        type="text"
+                        className="form-control Popup w-50 BlackTextBox relative left-4"
+                        value={project}
+                        onChange={(e) => setProject(e.target.value)}
+                    />
 
-                        <br />
-                        <label className="Popup">Project: </label>
+                    <br />
+                    <label className="Popup">Material: </label>
+                    <input
+                        type="text"
+                        className="form-control Popup w-50 BlackTextBox relative left-4"
+                        value={material}
+                        onChange={(e) => setMaterial(e.target.value)}
+                    />
+                    <br />
+
+                    <div className={` ${status === 4 ? "" : "hidden"}`}>
+                        <label className="Popup">Endmill: </label>
                         <input
                             type="text"
                             className="form-control Popup w-50 BlackTextBox relative left-4"
-                            value={project}
-                            onChange={(e) => setProject(e.target.value)}
+                            value={endmill}
+                            onChange={(e) => setEndmill(e.target.value)}
                         />
-
-                        <br />
-                        <label className="Popup">Material: </label>
-                        <input
-                            type="text"
-                            className="form-control Popup w-50 BlackTextBox relative left-4"
-                            value={material}
-                            onChange={(e) => setMaterial(e.target.value)}
-                        />
-                        <br />
-
-                        <div className={` ${status === 4 ? "" : "hidden"}`}>
-                            <label className="Popup">Endmill: </label>
-                            <input
-                                type="text"
-                                className="form-control Popup w-50 BlackTextBox relative left-4"
-                                value={endmill}
-                                onChange={(e) => setEndmill(e.target.value)}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="Popup">Creator: </label>
-                            <input
-                                type="text"
-                                className="form-control Popup w-50 BlackTextBox relative left-4"
-                                value={creator}
-                                onChange={(e) => setCreator(e.target.value)}
-                            />
-                        </div>
-
-                        <br />
-                        <label className="Popup">Status: </label>
-                        <button
-                            className={`relative left-2 ${
-                                status <= 0 ? "opacity-0" : ""
-                            }`}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setStatus(--status);
-                            }}
-                        >
-                            &#60;
-                        </button>
-                        <input
-                            type="text"
-                            className="form-control Popup w-50 BlackTextBox relative left-2"
-                            value={
-                                Object.values(Status)[status < 0 ? 0 : status]
-                            }
-                            onChange={(e) =>
-                                setStatus(Math.max(0, parseInt(e.target.value)))
-                            }
-                        />
-                        <button
-                            className={`relative left-2 ${
-                                status > 6 ? "opacity-0" : ""
-                            }`}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setStatus(++status);
-                            }}
-                        >
-                            &#62;
-                        </button>
-                        <br />
-                        <br />
-
-                        <div className={` ${status === 1 ? "" : "hidden"}`}>
-                            <label className="Popup">Link: </label>
-                            <input
-                                type="text"
-                                className={`form-control Popup w-50 BlackTextBox relative left-4`}
-                                value={link}
-                                onChange={(e) => setLink(e.target.value)}
-                            />
-                            <br />
-                            <br />
-                        </div>
-
-                        <div className="btn-group ">
-                            <label className="Popup">Remaining: </label>
-
-                            <input
-                                type="button"
-                                value="-"
-                                className="btn btn-danger"
-                                style={{ position: "relative", left: "3.25em" }}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        needed === "" ? 0 : parseInt(needed);
-                                    setNeeded("" + Math.max(0, value - 1));
-                                }}
-                            />
-
-                            <input
-                                type="text"
-                                className="outline outline-1 w-20 text-center relative text-black BlackTextBox"
-                                value={needed}
-                                style={{ position: "relative", left: "3.75em" }}
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setNeeded(e.target.value);
-                                }}
-                            />
-
-                            <input
-                                type="button"
-                                value="+"
-                                className="btn btn-success rounded-sm"
-                                style={{ position: "relative", left: "4.25em" }}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        needed === "" ? 0 : parseInt(needed);
-                                    setNeeded(value + 1 + "");
-                                }}
-                            />
-                        </div>
-
-                        <br />
-                        <br />
-                        <div className="btn-group ">
-                            <label className="Popup">Priority: </label>
-                            <input
-                                type="button"
-                                value="-"
-                                className="btn btn-danger"
-                                style={{ position: "relative", left: "3.25em" }}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        priority === ""
-                                            ? 0
-                                            : parseInt(priority);
-                                    setPriority("" + Math.max(1, value - 1));
-                                }}
-                            />
-
-                            <input
-                                type="text"
-                                className="outline outline-1 w-20 text-center relative text-black BlackTextBox"
-                                style={{ position: "relative", left: "3.75em" }}
-                                value={priority}
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setPriority(e.target.value);
-                                }}
-                            />
-
-                            <input
-                                type="button"
-                                value="+"
-                                className="btn btn-success rounded-sm"
-                                style={{ position: "relative", left: "4.25em" }}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const value =
-                                        priority === ""
-                                            ? 0
-                                            : parseInt(priority);
-                                    setPriority(value + 1 + "");
-                                }}
-                            />
-                        </div>
-
-                        <br />
-
-                        <label className="Popup NoteLabel">Notes: </label>
-                        <textarea
-                            placeholder="Add a note"
-                            className="form-control Popup w-50 BlackTextBox NoteBox"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                        />
-
-                        <br />
-                        <br />
-                        <button
-                            type="button"
-                            value="+"
-                            className="btn btn-secondary left-11 rounded-sm"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (openFileSelector.current !== null) {
-                                    setUploadFileType("cad");
-                                    handleOpenFileSelector("cad");
-                                }
-                            }}
-                        >
-                            Upload CAD
-                        </button>
-                        <button
-                            type="button"
-                            value="+"
-                            className="btn btn-secondary left-11 rounded-sm"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleFileDownload("cad");
-                            }}
-                        >
-                            Download CAD
-                        </button>
-
-                        <button
-                            type="button"
-                            value="+"
-                            className="btn btn-secondary left-11 rounded-sm"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (openFileSelector.current !== null) {
-                                    setUploadFileType("cam");
-                                    handleOpenFileSelector("cam");
-                                }
-                            }}
-                        >
-                            Upload GCODE
-                        </button>
-                        <button
-                            type="button"
-                            value="+"
-                            className="btn btn-secondary left-11 rounded-sm"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleFileDownload("cam");
-                            }}
-                        >
-                            Download GCODE
-                        </button>
                     </div>
+
+                    <div>
+                        <label className="Popup">Creator: </label>
+                        <input
+                            type="text"
+                            className="form-control Popup w-50 BlackTextBox relative left-4"
+                            value={creator}
+                            onChange={(e) => setCreator(e.target.value)}
+                        />
+                    </div>
+
+                    <br />
+                    <label className="Popup">Status: </label>
+                    <button
+                        className={`relative left-2 ${
+                            status <= 0 ? "opacity-0" : ""
+                        }`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setStatus(--status);
+                        }}
+                    >
+                        &#60;
+                    </button>
+                    <input
+                        type="text"
+                        className="form-control Popup w-50 BlackTextBox relative left-2"
+                        value={Object.values(Status)[status < 0 ? 0 : status]}
+                        onChange={(e) =>
+                            setStatus(Math.max(0, parseInt(e.target.value)))
+                        }
+                    />
+                    <button
+                        className={`relative left-2 ${
+                            status > 6 ? "opacity-0" : ""
+                        }`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setStatus(++status);
+                        }}
+                    >
+                        &#62;
+                    </button>
+                    <br />
+                    <br />
+
+                    <div className={` ${status === 1 ? "" : "hidden"}`}>
+                        <label className="Popup">Link: </label>
+                        <input
+                            type="text"
+                            className={`form-control Popup w-50 BlackTextBox relative left-4`}
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
+                        />
+                        <br />
+                        <br />
+                    </div>
+
+                    <div className="btn-group ">
+                        <label className="Popup">Remaining: </label>
+
+                        <input
+                            type="button"
+                            value="-"
+                            className="btn btn-danger"
+                            style={{ position: "relative", left: "3.25em" }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const value =
+                                    needed === "" ? 0 : parseInt(needed);
+                                setNeeded("" + Math.max(0, value - 1));
+                            }}
+                        />
+
+                        <input
+                            type="text"
+                            className="outline outline-1 w-20 text-center relative text-black BlackTextBox"
+                            value={needed}
+                            style={{ position: "relative", left: "3.75em" }}
+                            onChange={(e) => {
+                                e.preventDefault();
+                                setNeeded(e.target.value);
+                            }}
+                        />
+
+                        <input
+                            type="button"
+                            value="+"
+                            className="btn btn-success rounded-sm"
+                            style={{ position: "relative", left: "4.25em" }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const value =
+                                    needed === "" ? 0 : parseInt(needed);
+                                setNeeded(value + 1 + "");
+                            }}
+                        />
+                    </div>
+
+                    <br />
+                    <br />
+                    <div className="btn-group ">
+                        <label className="Popup">Priority: </label>
+                        <input
+                            type="button"
+                            value="-"
+                            className="btn btn-danger"
+                            style={{ position: "relative", left: "3.25em" }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const value =
+                                    priority === "" ? 0 : parseInt(priority);
+                                setPriority("" + Math.max(1, value - 1));
+                            }}
+                        />
+
+                        <input
+                            type="text"
+                            className="outline outline-1 w-20 text-center relative text-black BlackTextBox"
+                            style={{ position: "relative", left: "3.75em" }}
+                            value={priority}
+                            onChange={(e) => {
+                                e.preventDefault();
+                                setPriority(e.target.value);
+                            }}
+                        />
+
+                        <input
+                            type="button"
+                            value="+"
+                            className="btn btn-success rounded-sm"
+                            style={{ position: "relative", left: "4.25em" }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const value =
+                                    priority === "" ? 0 : parseInt(priority);
+                                setPriority(value + 1 + "");
+                            }}
+                        />
+                    </div>
+
+                    <br />
+
+                    <label className="Popup NoteLabel">Notes: </label>
+                    <textarea
+                        placeholder="Add a note"
+                        className="form-control Popup w-50 BlackTextBox NoteBox"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                    />
+
+                    <br />
+                    <br />
+                    <button
+                        type="button"
+                        value="+"
+                        className="btn btn-secondary left-11 rounded-sm"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (openFileSelector.current !== null) {
+                                setUploadFileType("cad");
+                                handleOpenFileSelector("cad");
+                            }
+                        }}
+                    >
+                        Upload CAD
+                    </button>
+                    <button
+                        type="button"
+                        value="+"
+                        className="btn btn-secondary left-11 rounded-sm"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleFileDownload("cad");
+                        }}
+                    >
+                        Download CAD
+                    </button>
+
+                    <button
+                        type="button"
+                        value="+"
+                        className="btn btn-secondary left-11 rounded-sm"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (openFileSelector.current !== null) {
+                                setUploadFileType("cam");
+                                handleOpenFileSelector("cam");
+                            }
+                        }}
+                    >
+                        Upload GCODE
+                    </button>
+                    <button
+                        type="button"
+                        value="+"
+                        className="btn btn-secondary left-11 rounded-sm"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleFileDownload("cam");
+                        }}
+                    >
+                        Download GCODE
+                    </button>
                 </Modal.Body>
 
                 <Modal.Footer className="bg-black">

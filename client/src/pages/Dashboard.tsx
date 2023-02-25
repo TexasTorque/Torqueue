@@ -59,7 +59,7 @@ export default function Dashboard() {
     const [filter, setFilter] = useState("✓");
 
     const [searchQuery, setSearchQuery] = useState("");
-    let responseJSON: any;
+    let responseJSON = useRef<HTMLInputElement>();
     let partsList = [] as Part[];
 
     let addPart = useRef(false);
@@ -74,7 +74,7 @@ export default function Dashboard() {
 
     const getParts = async () => {
         await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
-            responseJSON = data.data[1];
+            responseJSON.current = data.data[1];
         });
 
         getProjects();
@@ -104,16 +104,10 @@ export default function Dashboard() {
     }, [machineFilter]);
 
     const getProjects = async () => {
-        await axios.get(`${BACKEND_URL}/getAllParts`).then((data) => {
-            responseJSON = data.data[1];
-        });
-        partsList.sort((a, b) => {
-            return numberSortArray(a.priority, b.priority);
-        });
-
         partsList = [];
         let localPartsList = [];
-        for (let part in responseJSON) partsList.push(responseJSON[part]);
+        for (let part in responseJSON.current)
+            partsList.push(responseJSON.current[part]);
 
         localPartsList = partsList
             .filter((v) => (filter === "✓" ? v.status !== 7 : true))
@@ -171,6 +165,7 @@ export default function Dashboard() {
             }
 
             getParts();
+            //getProjects();
 
             message =
                 setRequest.data === "success" && deleteStatus === "success"
@@ -221,7 +216,7 @@ export default function Dashboard() {
                         {projectFilter}
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
+                    <Dropdown.Menu className="DropdownScroll">
                         <Dropdown.Item onClick={() => setProjectFilter("All")}>
                             Show All
                         </Dropdown.Item>
