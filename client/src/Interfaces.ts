@@ -14,6 +14,7 @@ export interface Part {
     files: {
         cadExt: string;
         camExt: string;
+        camSize: string;
     };
     dev: {
         delete: boolean;

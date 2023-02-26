@@ -118,6 +118,12 @@ body {
     font-size: 2em;
 }
 
+.tooltip-class {
+    position: absolute;
+    left: 40px;
+    top: 10px;
+}
+
 @media only screen and (max-width: 1000px) {
     .SearchBar {
         width: 9em;

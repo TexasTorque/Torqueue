@@ -27,7 +27,7 @@ const defaultPart = {
     notes: "",
     project: "",
     link: "",
-    files: { camExt: "", cadExt: "" },
+    files: { camExt: "", cadExt: "", camSize: "" },
     dev: { delete: false, upload: false, download: false },
 };
 
@@ -165,7 +165,6 @@ export default function Dashboard() {
             }
 
             getParts();
-            //getProjects();
 
             message =
                 setRequest.data === "success" && deleteStatus === "success"

@@ -136,6 +136,11 @@ export default function ManagePopup({
         const { files } = e.target;
         if (files && files.length) {
             const parts = files[0].name.split(".");
+            popupPart.files.camSize =
+                files[0].size / 1000 > 1000
+                    ? Math.round(files[0].size / 100000) / 10 + " MB"
+                    : Math.round(files[0].size / 1000) + " KB";
+
             fileUploadExtension = parts[parts.length - 1];
 
             if (uploadFileType === "cad")
@@ -265,6 +270,7 @@ export default function ManagePopup({
             files: {
                 camExt: popupPart.files.camExt,
                 cadExt: popupPart.files.cadExt,
+                camSize: popupPart.files.camSize,
             },
             notes: notes,
             dev: { delete: false },
@@ -321,6 +327,7 @@ export default function ManagePopup({
                 files: {
                     camExt: popupPart.files.camExt,
                     cadExt: popupPart.files.cadExt,
+                    camSize: popupPart.files.camSize,
                 },
                 notes: notes,
                 dev: { delete: false },
@@ -348,6 +355,7 @@ export default function ManagePopup({
             link: "",
             files: {
                 camExt: popupPart.files.camExt,
+                camSize: popupPart.files.camSize,
                 cadExt: popupPart.files.cadExt,
             },
             dev: { delete: true },
@@ -362,7 +370,7 @@ export default function ManagePopup({
                 style={{
                     position: "absolute",
                     left: "45%",
-                    
+
                     top: "50%",
                     zIndex: 9999,
                 }}

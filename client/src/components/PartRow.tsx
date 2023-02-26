@@ -66,11 +66,11 @@ export default function PartRow({
     };
 
     return (
-        <tr>
+        <tr style={{ verticalAlign: "middle" }}>
             <td align="center">{part.priority}</td>
             <td align="center">{part.name}</td>
             <td align="center">{part.project === "" ? "N/A" : part.project}</td>
-            <td align="center">{part.machine}</td>
+            <td align="center">{part.machine === ""? "Any" : part.machine}</td>
             <td align="center">{part.material}</td>
             <td align="center">
                 {part.endmill === undefined || part.endmill.length === 0
@@ -92,6 +92,9 @@ export default function PartRow({
             <td align="center">
                 <button
                     className="btn btn-primary my-2"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title={`${part.files.camSize}`}
                     onClick={(e) => download(e)}
                 >
                     ↓
