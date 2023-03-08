@@ -243,20 +243,22 @@ export default function ManagePopup({
             link.click();
         });
     };
-    
-    const isPreston = (creator) => {
-        creator = creator.toLowerCase().replace(/\s/g, '');
-        return creator === "preston"
-            || creator === "prestonm"
-            || creator === "prestonmontgomery"
-            || creator === "pdawg"
-            || creator === "pdigity"
-            || creator === "pdiggity";
-    }
+
+    const isPreston = (creator: string) => {
+        creator = creator.toLowerCase().replace(/\s/g, "");
+        return (
+            creator === "preston" ||
+            creator === "prestonm" ||
+            creator === "prestonmontgomery" ||
+            creator === "pdawg" ||
+            creator === "pdigity" ||
+            creator === "pdiggity"
+        );
+    };
 
     const savePart = () => {
         if (name === "") {
-            alert("Please provide a name"); 
+            alert("Please provide a name");
             return;
         }
 
@@ -264,9 +266,6 @@ export default function ManagePopup({
             alert("Please provide a creator");
             return;
         }
-
-        if (isPreston(creator))
-            setPriority("5");
 
         setHotPart({
             id: popupPart.id,
@@ -276,7 +275,7 @@ export default function ManagePopup({
             machine: machine,
             endmill: endmill,
             needed: needed,
-            priority: priority,
+            priority: isPreston(creator) ? "5" : priority,
             project: project,
             creator: creator,
             link: link,
@@ -333,7 +332,7 @@ export default function ManagePopup({
                 endmill: endmill,
                 machine: machine,
                 needed: needed,
-                priority: priority,
+                priority: isPreston(creator) ? "5" : priority,
                 creator: creator,
                 project: project,
                 link: link,

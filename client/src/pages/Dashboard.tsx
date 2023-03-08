@@ -83,6 +83,8 @@ export default function Dashboard() {
             return numberSortArray(a.priority, b.priority);
         });
 
+
+
         setParts(partsList);
     };
 

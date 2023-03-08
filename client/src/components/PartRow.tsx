@@ -71,10 +71,10 @@ export default function PartRow({
             <td align="center">{part.name}</td>
             <td align="center">{part.project === "" ? "N/A" : part.project}</td>
             <td align="center">{part.machine === ""? "Any" : part.machine}</td>
-            <td align="center">{part.material}</td>
+            <td align="center">{part.material === "" ? "N/A" : part.material}</td>
             <td align="center">
                 {part.endmill === undefined || part.endmill.length === 0
-                    ? "X"
+                    ? "N/A"
                     : part.endmill}
             </td>
             <td align="center">
