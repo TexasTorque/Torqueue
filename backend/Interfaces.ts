@@ -7,11 +7,22 @@ export interface Part {
     name: string;
     status: number;
     material: string;
-    project: string;
     machine: string;
+    endmill: string;
     needed: string;
     priority: string;
-    files: Files;
+    notes: string;
+    project: string;
     link: string;
-    dev: {delete: boolean, upload: boolean, download: boolean};
+    creator: string;
+    createDate: string;
+    partNumber: number;
+    files: {
+        cadExt: string;
+        camExt: string;
+        camSize: string;
+    };
+    dev: {
+        delete: boolean;
+    };
 }

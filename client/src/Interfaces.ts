@@ -11,6 +11,8 @@ export interface Part {
     project: string;
     link: string;
     creator: string;
+    createDate: string;
+    partNumber: number;
     files: {
         cadExt: string;
         camExt: string;

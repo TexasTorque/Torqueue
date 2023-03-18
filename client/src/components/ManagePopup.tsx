@@ -13,6 +13,7 @@ type Props = {
     defaultPart: Part;
     addPart: any;
     name: string;
+    numParts: number;
     setName: (name: string) => void;
     setShowPopup: (show: boolean) => void;
     setHotPart: (hotPart: Part) => void;
@@ -31,6 +32,7 @@ export default function ManagePopup({
     setPopupPart,
     addPart,
     name,
+    numParts,
     setName,
 }: Props) {
     const [machine, setMachine] = useState(popupPart.machine);
@@ -125,6 +127,8 @@ export default function ManagePopup({
             setPopupName("Add a Part");
             popupPart.id = uuid4();
             addPart.current = false;
+            popupPart.createDate = getDate();
+            popupPart.partNumber = numParts + 1;
             setName("");
         } else setPopupName(`Edit ${popupPart.name}`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -246,14 +250,15 @@ export default function ManagePopup({
 
     const isPreston = (creator: string) => {
         creator = creator.toLowerCase().replace(/\s/g, "");
-        return (
-            creator === "preston" ||
-            creator === "prestonm" ||
-            creator === "prestonmontgomery" ||
-            creator === "pdawg" ||
-            creator === "pdigity" ||
-            creator === "pdiggity"
-        );
+        return false; // Don't be mean to Preston :(
+        //return (
+        //    creator === "preston" ||
+        //    creator === "prestonm" ||
+        //    creator === "prestonmontgomery" ||
+        //    creator === "pdawg" ||
+        //    creator === "pdigity" ||
+        //    creator === "pdiggity"
+        //);
     };
 
     const savePart = () => {
@@ -279,6 +284,8 @@ export default function ManagePopup({
             project: project,
             creator: creator,
             link: link,
+            createDate: getDate(),
+            partNumber: popupPart.partNumber,
             files: {
                 camExt: popupPart.files.camExt,
                 cadExt: popupPart.files.cadExt,
@@ -336,6 +343,8 @@ export default function ManagePopup({
                 creator: creator,
                 project: project,
                 link: link,
+                createDate: getDate(),
+                partNumber: popupPart.partNumber,
                 files: {
                     camExt: popupPart.files.camExt,
                     cadExt: popupPart.files.cadExt,
@@ -349,6 +358,23 @@ export default function ManagePopup({
         }
 
         setShowPopup(false);
+    };
+
+    const getDate = () => {
+        const date = new Date();
+        return (
+            (date.getMonth() > 8
+                ? date.getMonth() + 1
+                : "0" + (date.getMonth() + 1)) +
+            "/" +
+            (date.getDate() > 9 ? date.getDate() : "0" + date.getDate()) +
+            "/" +
+            date.getFullYear() +
+            " " +
+            date.getHours() +
+            ":" +
+            date.getMinutes()
+        );
     };
 
     const deletePart = () => {
@@ -365,6 +391,8 @@ export default function ManagePopup({
             project: "",
             notes: "",
             link: "",
+            createDate: "",
+            partNumber: 0,
             files: {
                 camExt: popupPart.files.camExt,
                 camSize: popupPart.files.camSize,
@@ -686,6 +714,18 @@ export default function ManagePopup({
                     >
                         Download GCODE
                     </button>
+                    <br />
+                    <br />
+                    <div style={{display: "flex"}}>
+                        <h2>
+                            {popupPart.createDate
+                                ? "Created " + popupPart.createDate
+                                : ""}
+                        </h2>
+                        <h2 style={{ position: "absolute", right: "2em" }}>
+                            {popupPart.partNumber ? "Part # " + popupPart.partNumber : ""}
+                        </h2>
+                    </div>
                 </Modal.Body>
 
                 <Modal.Footer className="bg-black">

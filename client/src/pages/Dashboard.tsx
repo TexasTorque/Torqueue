@@ -27,6 +27,8 @@ const defaultPart = {
     notes: "",
     project: "",
     link: "",
+    createDate: "",
+    partNumber: 0,
     files: { camExt: "", cadExt: "", camSize: "" },
     dev: { delete: false, upload: false, download: false },
 };
@@ -57,6 +59,7 @@ export default function Dashboard() {
     const [machineFilter, setMachineFilter] = useState("All");
     const [projectFilter, setProjectFilter] = useState("All");
     const [filter, setFilter] = useState("✓");
+    const [numParts, setNumParts] = useState(0);
 
     const [searchQuery, setSearchQuery] = useState("");
     let responseJSON = useRef<HTMLInputElement>();
@@ -83,7 +86,7 @@ export default function Dashboard() {
             return numberSortArray(a.priority, b.priority);
         });
 
-
+        setNumParts(Object.keys(responseJSON.current).length);
 
         setParts(partsList);
     };
@@ -206,7 +209,10 @@ export default function Dashboard() {
                     "fixed-top alert",
                     alert.success ? "alert-success" : "alert-danger"
                 )}
-                style={{ display: alert.show ? "" : "none" }}
+                style={{
+                    display: alert.show ? "flex" : "none",
+                    justifyContent: "center",
+                }}
             >
                 {alert.message}
             </div>
@@ -283,14 +289,20 @@ export default function Dashboard() {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
-                <img
-                    src={torqueLogo}
-                    alt="TorqueueLogo"
-                    className="CenterImage"
-                ></img>
-                <h1 className="TextCenterDiv" style={{ marginRight: "auto" }}>
-                    Torqueue
-                </h1>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    {" "}
+                    <img
+                        src={torqueLogo}
+                        alt="TorqueueLogo"
+                        className="CenterImage"
+                    ></img>
+                    <h1
+                        className="TextCenterDiv"
+                        style={{ marginRight: "auto" }}
+                    >
+                        Torqueue
+                    </h1>
+                </div>
 
                 <div className="SearchBarDiv">
                     <input
@@ -343,6 +355,7 @@ export default function Dashboard() {
                 addPart={addPart}
                 name={name}
                 setName={setName}
+                numParts={numParts}
             />
 
             <button
