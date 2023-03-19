@@ -18,8 +18,8 @@
     color: white;
 }
 .DropdownScroll {
-    height: 200px;
     overflow-y: auto;
+    resize: vertical !important;;
 }
 
 .btn-group:after {

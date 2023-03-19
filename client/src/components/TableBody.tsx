@@ -24,11 +24,32 @@ export default function TableBody({
     BACKEND_URL,
     filter,
 }: Props) {
+    const randomQuote1 = "Go do some more CAD :)";
+    const randomQuote2 = "You can rest easy now  🦆";
+    const randomQuote3 = "You're all caught up!";
+    const randomQuote4 = "Go do some more CAD Abishek  😡";
+
+    const getRandomQuote = () => {
+        const random = Math.floor(Math.random() * 4);
+        if (random === 0) return randomQuote1;
+        else if (random === 1) return randomQuote2;
+        else if (random === 2) return randomQuote3;
+        else if (random === 3) return randomQuote4;
+        else return randomQuote4;
+    };
+
     if (machineFilter === "All") machineFilter = "";
 
-    return parts === null ? (
+    if (parts === null)
+        return (
+            <tr>
+                <td>Loading...</td>
+            </tr>
+        );
+
+    return parts.length ? (
         <tr>
-            <td>Loading...</td>
+            <td>{getRandomQuote()}</td>
         </tr>
     ) : (
         <>
@@ -54,7 +75,6 @@ export default function TableBody({
                               Object.keys(Status).indexOf("COMPLETE")
                         : true
                 )
-
                 .map((part: Part, id: number) => {
                     return (
                         <PartRow

@@ -12,7 +12,7 @@ import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5738;
-const production = true;
+const production = true
 
 if (production) {
     app.use("/", express.static(path.join(__dirname, "./build")));

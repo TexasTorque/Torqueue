@@ -223,7 +223,7 @@ export default function Dashboard() {
                         {projectFilter}
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu className="DropdownScroll">
+                    <Dropdown.Menu className="DropdownScroll" style={{height: projects.length > 15 ? "100px" : "50px"}}>
                         <Dropdown.Item onClick={() => setProjectFilter("All")}>
                             Show All
                         </Dropdown.Item>
