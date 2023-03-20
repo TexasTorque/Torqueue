@@ -47,7 +47,7 @@ export default function TableBody({
             </tr>
         );
 
-    return parts.length ? (
+    return parts == null ? (
         <tr>
             <td>{getRandomQuote()}</td>
         </tr>
