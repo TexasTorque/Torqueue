@@ -18,8 +18,8 @@
     color: white;
 }
 .DropdownScroll {
+    max-height: 150px;
     overflow-y: auto;
-    resize: vertical !important;;
 }
 
 .btn-group:after {
