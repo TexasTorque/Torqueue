@@ -47,6 +47,7 @@ export default function ManagePopup({
   const [project, setProject] = useState(popupPart.project);
   const [endmill, setEndmill] = useState(popupPart.endmill);
   const [creator, setCreator] = useState(popupPart.creator);
+  const [dueDate, setDueDate] = useState(popupPart.dueDate);
 
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +64,7 @@ export default function ManagePopup({
   const previousLink = useRef("");
   const overRideCAD = useRef(false);
   const overRideCAM = useRef(false);
+  const previousDueDate = useRef("");
 
   const [uploadFileType, setUploadFileType] = useState("cad");
 
@@ -84,6 +86,7 @@ export default function ManagePopup({
     previousLink.current = link;
     previousEndmill.current = endmill;
     previousCreator.current = creator;
+    previousDueDate.current = dueDate;
 
     const statusKeyboardInput = (e: any) => {
       if (e.keyCode === 39) setStatus(++status);
@@ -110,6 +113,7 @@ export default function ManagePopup({
     link,
     endmill,
     creator,
+    dueDate,
   ]);
 
   useEffect(() => {
@@ -124,6 +128,7 @@ export default function ManagePopup({
     setNotes(popupPart.notes);
     setLink(popupPart.link);
     setCreator(popupPart.creator);
+    setDueDate(popupPart.dueDate);
     if (addPart.current) {
       setPopupName("Add a Part");
       popupPart.id = uuid4();
@@ -285,6 +290,7 @@ export default function ManagePopup({
       link: link,
       createDate: getDate(),
       partNumber: popupPart.partNumber,
+      dueDate: dueDate,
       files: {
         camExt: popupPart.files.camExt,
         cadExt: popupPart.files.cadExt,
@@ -328,7 +334,8 @@ export default function ManagePopup({
       hasUploaded ||
       link !== popupPart.link ||
       creator !== popupPart.creator ||
-      endmill !== popupPart.endmill
+      endmill !== popupPart.endmill ||
+      dueDate !== popupPart.dueDate
     ) {
       setHotPart({
         id: popupPart.id,
@@ -344,6 +351,7 @@ export default function ManagePopup({
         link: link,
         createDate: getDate(),
         partNumber: popupPart.partNumber,
+        dueDate: dueDate,
         files: {
           camExt: popupPart.files.camExt,
           cadExt: popupPart.files.cadExt,
@@ -392,6 +400,7 @@ export default function ManagePopup({
       link: "",
       createDate: "",
       partNumber: 0,
+      dueDate: "",
       files: {
         camExt: popupPart.files.camExt,
         camSize: popupPart.files.camSize,
@@ -451,9 +460,9 @@ export default function ManagePopup({
             <Dropdown.Toggle variant="primary" className="ManagePopupDropdown">
               {machine}
             </Dropdown.Toggle>
- 
+
             <Dropdown.Menu className="ManagePopupDropdownMenu">
-              <MachineDropdown setMachineFilter={setMachine}/>
+              <MachineDropdown setMachineFilter={setMachine} />
             </Dropdown.Menu>
           </Dropdown>
 
@@ -495,8 +504,15 @@ export default function ManagePopup({
               onChange={(e) => setCreator(e.target.value)}
             />
           </div>
-
+          <label className="Popup">Due: </label>
+          <input
+            type="date"
+            defaultValue={dueDate}
+            className="form-control Popup w-50 BlackTextBox relative left-4"
+            onChange={(e) => setDueDate(e.target.value)}
+          />
           <br />
+
           <label className="Popup">Status: </label>
           <button
             className={`relative left-2 ${status <= 0 ? "opacity-0" : ""}`}
@@ -617,7 +633,6 @@ export default function ManagePopup({
           </div>
 
           <br />
-
           <label className="Popup NoteLabel">Notes: </label>
           <textarea
             placeholder="Add a note"

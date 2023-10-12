@@ -3,6 +3,7 @@ export default function TableHeader() {
         <thead>
             <tr>
                 <th className="TableHeaderCell text-center">Priority</th>
+                <th className="w-5 TableHeaderCell text-center">Due</th>
                 <th className="TableHeaderCell text-center">Part</th>
                 <th className="TableHeaderCell text-center">Project</th>
                 <th className="TableHeaderCell text-center">Machine</th>

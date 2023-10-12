@@ -13,6 +13,7 @@ export interface Part {
     creator: string;
     createDate: string;
     partNumber: number;
+    dueDate: string;
     files: {
         cadExt: string;
         camExt: string;

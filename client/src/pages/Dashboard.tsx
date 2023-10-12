@@ -29,6 +29,7 @@ const defaultPart = {
   link: "",
   createDate: "",
   partNumber: 0,
+  dueDate: "",
   files: { camExt: "", cadExt: "", camSize: "" },
   dev: { delete: false, upload: false, download: false },
 };
@@ -39,7 +40,7 @@ const numberSortArray = (a: any, b: any) => {
 
 export default function Dashboard() {
   const BACKEND_URL = "https://torqueue.texastorque.org";
-  //const BACKEND_URL = "http://localhost:5738";
+//   const BACKEND_URL = "http://localhost:5738";
 
   initializeApp(firebaseConfig);
 
