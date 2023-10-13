@@ -79,7 +79,9 @@ export default function PartRow({
     <tr style={{ verticalAlign: "middle" }}>
       <td align="center">{part.priority}</td>
       <td align="center">
-        {part.dueDate === undefined ? "N/A" : getDateString(part.dueDate)}
+        {part.dueDate === undefined || part.dueDate.length === 0
+          ? "N/A"
+          : getDateString(part.dueDate)}
       </td>
       <td align="center">{part.name}</td>
       <td align="center">{part.project === "" ? "N/A" : part.project}</td>
