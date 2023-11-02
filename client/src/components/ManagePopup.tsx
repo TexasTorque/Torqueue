@@ -343,7 +343,7 @@ export default function ManagePopup({
       creator !== popupPart.creator ||
       endmill !== popupPart.endmill ||
       dueDate !== popupPart.dueDate ||
-      asignee != popupPart.asignee
+      asignee !== popupPart.asignee
     ) {
       setHotPart({
         id: popupPart.id,
