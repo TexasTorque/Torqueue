@@ -85,7 +85,7 @@ export default function PartRow({
       </td>
       <td align="center">{part.name}</td>
       <td align="center">{part.project === "" ? "N/A" : part.project}</td>
-      <td align="center">{part.machine === "" ? "Any" : part.machine}</td>
+      <td align="center">{part.machine === "" ? "Any" : part.machine === "3D Printer" ? part.asignee + "'s " + part.machine : part.machine}</td>
       <td align="center">{part.material === "" ? "N/A" : part.material}</td>
       <td align="center">
         {part.endmill === undefined || part.endmill.length === 0

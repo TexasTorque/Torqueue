@@ -18,6 +18,7 @@ export interface Part {
     createDate: string;
     partNumber: number;
     dueDate: string;
+    asignee: string;
     files: {
         cadExt: string;
         camExt: string;

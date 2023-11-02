@@ -30,6 +30,7 @@ const defaultPart = {
   createDate: "",
   partNumber: 0,
   dueDate: "",
+  asignee: "",
   files: { camExt: "", cadExt: "", camSize: "" },
   dev: { delete: false, upload: false, download: false },
 };

@@ -48,6 +48,7 @@ export default function ManagePopup({
   const [endmill, setEndmill] = useState(popupPart.endmill);
   const [creator, setCreator] = useState(popupPart.creator);
   const [dueDate, setDueDate] = useState(popupPart.dueDate);
+  const [asignee, setAsignee] = useState(popupPart.asignee);
 
   const [loading, setLoading] = useState(false);
 
@@ -65,6 +66,7 @@ export default function ManagePopup({
   const overRideCAD = useRef(false);
   const overRideCAM = useRef(false);
   const previousDueDate = useRef("");
+  const previousAsignee = useRef("");
 
   const [uploadFileType, setUploadFileType] = useState("cad");
 
@@ -87,10 +89,11 @@ export default function ManagePopup({
     previousEndmill.current = endmill;
     previousCreator.current = creator;
     previousDueDate.current = dueDate;
+    previousAsignee.current = asignee;
 
     const statusKeyboardInput = (e: any) => {
-      if (e.keyCode === 39) setStatus(++status);
-      else if (e.keyCode === 37) setStatus(--status);
+      if (e.keyCode === 39) setStatus(Math.min(status + 1, 7));
+      else if (e.keyCode === 37) setStatus(Math.max(0, --status));
       else if (e.keyCode === 13) {
         e.preventDefault();
         savePartAndClose();
@@ -114,6 +117,7 @@ export default function ManagePopup({
     endmill,
     creator,
     dueDate,
+    asignee,
   ]);
 
   useEffect(() => {
@@ -129,6 +133,8 @@ export default function ManagePopup({
     setLink(popupPart.link);
     setCreator(popupPart.creator);
     setDueDate(popupPart.dueDate);
+    setAsignee(popupPart.asignee);
+
     if (addPart.current) {
       setPopupName("Add a Part");
       popupPart.id = uuid4();
@@ -291,6 +297,7 @@ export default function ManagePopup({
       createDate: getDate(),
       partNumber: popupPart.partNumber,
       dueDate: dueDate,
+      asignee: asignee,
       files: {
         camExt: popupPart.files.camExt,
         cadExt: popupPart.files.cadExt,
@@ -335,7 +342,8 @@ export default function ManagePopup({
       link !== popupPart.link ||
       creator !== popupPart.creator ||
       endmill !== popupPart.endmill ||
-      dueDate !== popupPart.dueDate
+      dueDate !== popupPart.dueDate ||
+      asignee != popupPart.asignee
     ) {
       setHotPart({
         id: popupPart.id,
@@ -352,6 +360,7 @@ export default function ManagePopup({
         createDate: getDate(),
         partNumber: popupPart.partNumber,
         dueDate: dueDate,
+        asignee: asignee,
         files: {
           camExt: popupPart.files.camExt,
           cadExt: popupPart.files.cadExt,
@@ -401,6 +410,7 @@ export default function ManagePopup({
       createDate: "",
       partNumber: 0,
       dueDate: "",
+      asignee: "",
       files: {
         camExt: popupPart.files.camExt,
         camSize: popupPart.files.camSize,
@@ -539,7 +549,7 @@ export default function ManagePopup({
             &#62;
           </button>
           <br />
-          <br />
+          <br className={` ${status > 1 ? "" : "hidden"}`} />
 
           <div className={` ${status === 1 ? "" : "hidden"}`}>
             <label className="Popup">Link: </label>
@@ -551,6 +561,19 @@ export default function ManagePopup({
             />
             <br />
             <br />
+          </div>
+
+          <div className={` ${status === 0 ? "" : "hidden"}`}>
+            <label className="Popup">Asignee: </label>
+            <input
+              type="text"
+              className="form-control Popup w-50 BlackTextBox relative left-4"
+              value={asignee}
+              onChange={(e) => setAsignee(e.target.value)}
+            />
+            <br />
+            <br />
+
           </div>
 
           <div className="btn-group ">
