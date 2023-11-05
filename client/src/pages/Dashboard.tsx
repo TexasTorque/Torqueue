@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import TableBody from "../components/TableBody";
 import ManagePopup from "../components/ManagePopup";
 import "../index.css";
-import { Part } from "../Interfaces";
+import { Part, Status } from "../Interfaces";
 import axios from "axios";
 import { classNames } from "@hkamran/utility-web";
 import torqueLogo from "../imgs/torqueLogo.png";
@@ -40,7 +40,7 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-    const BACKEND_URL = "https://torqueue.texastorque.org";
+  const BACKEND_URL = "https://torqueue.texastorque.org";
 //   const BACKEND_URL = "http://localhost:5738";
 
   initializeApp(firebaseConfig);
@@ -111,12 +111,32 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [machineFilter]);
 
-  const alphaSortArray = (a:string, b:string) => {
+  useEffect(() => {
+    if (window.location.href.includes("#")) {
+      let partID = window.location.href.split("#")[1];
+      for (let part in responseJSON.current) {
+        if (responseJSON.current[part].id === partID) {
+          if (
+            responseJSON.current[part].status ===
+              Object.keys(Status).indexOf("COMPLETE") ||
+            responseJSON.current[part].needed === 0
+          ) {
+            setFilter("X");
+          }
+          setPopupPart(responseJSON.current[part]);
+          setShowPopup(true);
+          window.location.href = "#";
+        }
+      }
+    }
+  });
+
+  const alphaSortArray = (a: string, b: string) => {
     a = a.toLowerCase();
     b = b.toLowerCase();
 
     return a < b ? -1 : a > b ? 1 : 0;
-};
+  };
 
   const getProjects = async () => {
     partsList = [];
@@ -127,16 +147,15 @@ export default function Dashboard() {
 
     projects = partsList.map((v) => v.project);
     projects = projects
-    .filter(
-      (part, index, self) =>
-        index ===
-        self.findIndex((t) => t.toLowerCase() === part.toLowerCase())
-    )
-    .filter((v) => v !== "");
-
+      .filter(
+        (part, index, self) =>
+          index ===
+          self.findIndex((t) => t.toLowerCase() === part.toLowerCase())
+      )
+      .filter((v) => v !== "");
 
     projects.sort((a, b) => {
-        return alphaSortArray(a, b);
+      return alphaSortArray(a, b);
     });
 
     localPartsList = partsList
@@ -261,7 +280,10 @@ export default function Dashboard() {
             <Dropdown.Item onClick={() => setMachineFilter("All")}>
               All
             </Dropdown.Item>
-            <MachineDropdown setMachineFilter={setMachineFilter} setStatus={null}/>
+            <MachineDropdown
+              setMachineFilter={setMachineFilter}
+              setStatus={null}
+            />
           </Dropdown.Menu>
         </Dropdown>
         <h2 className="flex pl-3 Filter">Filter: </h2>
@@ -277,8 +299,14 @@ export default function Dashboard() {
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {" "}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
           <img
             src={torqueLogo}
             alt="TorqueueLogo"

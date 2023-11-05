@@ -38,7 +38,6 @@ export default function PartRow({
         fileExt: "cam",
         name: `${part.name}-GCODE`,
       };
-      console.log("found cam");
     } else if (part.files.cadExt !== "") {
       params = {
         fileId: part.id,
@@ -98,9 +97,9 @@ export default function PartRow({
     if (part.machine === "") return "Any";
 
     if (part.machine === "3D Printer")
-        if (part.asignee !== undefined && part.asignee.length > 0)
-            return part.asignee + "'s " + part.machine;
-    else return "3D Printer"
+      if (part.asignee !== undefined && part.asignee.length > 0)
+        return part.asignee + "'s " + part.machine;
+      else return "3D Printer";
 
     return part.machine;
   };

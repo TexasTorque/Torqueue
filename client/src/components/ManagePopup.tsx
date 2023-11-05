@@ -149,6 +149,8 @@ export default function ManagePopup({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [popupPart, showPopup]);
 
+  console.log(popupPart)
+
   const handleFileUpload = async (e: { target: { files: any } }) => {
     setLoading(true);
     hasUploaded = true;
@@ -161,8 +163,6 @@ export default function ManagePopup({
           : Math.round(files[0].size / 1000) + " KB";
 
       fileUploadExtension = parts[parts.length - 1];
-
-      console.log(uploadFileType);
 
       if (uploadFileType === "cad")
         popupPart.files.cadExt = fileUploadExtension;
