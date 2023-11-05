@@ -15,6 +15,7 @@ type Props = {
   addPart: any;
   name: string;
   numParts: number;
+  projects: string[];
   setName: (name: string) => void;
   setShowPopup: (show: boolean) => void;
   setHotPart: (hotPart: Part) => void;
@@ -34,6 +35,7 @@ export default function ManagePopup({
   addPart,
   name,
   numParts,
+  projects,
   setName,
 }: Props) {
   const [machine, setMachine] = useState(popupPart.machine);
@@ -69,6 +71,7 @@ export default function ManagePopup({
   const previousAsignee = useRef("");
 
   const [uploadFileType, setUploadFileType] = useState("cad");
+  const [projectOpen, setProjectOpen] = useState(false);
 
   const openFileSelector = useRef(null);
 
@@ -93,7 +96,7 @@ export default function ManagePopup({
 
     const statusKeyboardInput = (e: any) => {
       if (e.keyCode === 39) setStatus(Math.min(status + 1, 7));
-      else if (e.keyCode === 37) setStatus(Math.max(0, --status));
+      else if (e.keyCode === 37) setStatus(Math.max(0, status - 1));
       else if (e.keyCode === 13) {
         e.preventDefault();
         savePartAndClose();
@@ -421,6 +424,15 @@ export default function ManagePopup({
     setShowPopup(false);
   };
 
+  const openProjectDropdown = () => {
+    return (
+      projectOpen &&
+      projects.filter((listedProject) =>
+        listedProject.toLowerCase().includes(project.toLowerCase())
+      ).length > 1
+    );
+  };
+
   return (
     <>
       <div
@@ -428,7 +440,6 @@ export default function ManagePopup({
         style={{
           position: "absolute",
           left: "45%",
-
           top: "50%",
           zIndex: 9999,
         }}
@@ -483,7 +494,33 @@ export default function ManagePopup({
             className="form-control Popup w-50 BlackTextBox relative left-4"
             value={project}
             onChange={(e) => setProject(e.target.value)}
+            onFocus={() => setProjectOpen(true)}
           />
+
+          {openProjectDropdown() ? (
+            <div className="form-control Popup w-50 BlackTextBox ProjectDropdown">
+              {projects
+                .filter((listedProject) =>
+                  listedProject.toLowerCase().includes(project.toLowerCase())
+                )
+                .map((listedProject: string, id: number) => {
+                  return (
+                    <div
+                      key={id}
+                      onClick={() => {
+                        setProject(listedProject);
+                        setProjectOpen(false);
+                      }}
+                      className="ProjectDDItem"
+                    >
+                      {listedProject}
+                    </div>
+                  );
+                })}
+            </div>
+          ) : (
+            <></>
+          )}
 
           <br />
           <label className="Popup">Material: </label>
@@ -573,7 +610,6 @@ export default function ManagePopup({
             />
             <br />
             <br />
-
           </div>
 
           <div className="btn-group ">

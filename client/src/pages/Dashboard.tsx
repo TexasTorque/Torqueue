@@ -40,7 +40,7 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-  const BACKEND_URL = "https://torqueue.texastorque.org";
+    const BACKEND_URL = "https://torqueue.texastorque.org";
 //   const BACKEND_URL = "http://localhost:5738";
 
   initializeApp(firebaseConfig);
@@ -56,6 +56,7 @@ export default function Dashboard() {
   const [hotPart, setHotPart] = useState<Part>(defaultPart);
   const [parts, setParts] = useState<Part[]>(null);
   const [name, setName] = useState("");
+  let [activeProjects, setActiveProjects] = useState<string[]>([]);
   let [projects, setProjects] = useState<string[]>([]);
 
   const [machineFilter, setMachineFilter] = useState("All");
@@ -112,17 +113,28 @@ export default function Dashboard() {
 
   const getProjects = async () => {
     partsList = [];
-    let localPartsList = [];
+    let localPartsList = [] as Part[];
+
     for (let part in responseJSON.current)
       partsList.push(responseJSON.current[part]);
+
+    projects = partsList.map((v) => v.project);
+    projects = projects
+    .filter(
+      (part, index, self) =>
+        index ===
+        self.findIndex((t) => t.toLowerCase() === part.toLowerCase())
+    )
+    .filter((v) => v !== "");
+    
 
     localPartsList = partsList
       .filter((v) => (filter === "✓" ? v.status !== 7 : true))
       .filter((v) => (filter === "✓" ? parseInt(v.needed) !== 0 : true));
 
-    projects = localPartsList.map((v) => v.project);
+    activeProjects = localPartsList.map((v) => v.project);
 
-    projects = projects
+    activeProjects = activeProjects
       .filter(
         (part, index, self) =>
           index ===
@@ -130,6 +142,7 @@ export default function Dashboard() {
       )
       .filter((v) => v !== "");
 
+    setActiveProjects(activeProjects);
     setProjects(projects);
   };
 
@@ -218,14 +231,11 @@ export default function Dashboard() {
         <Dropdown className="top-0 flex" style={{ paddingLeft: "1em" }}>
           <Dropdown.Toggle variant="success">{projectFilter}</Dropdown.Toggle>
 
-          <Dropdown.Menu
-            className="DropdownScroll"
-            style={{ height: "110px" }}
-          >
+          <Dropdown.Menu className="DropdownScroll" style={{ height: "110px" }}>
             <Dropdown.Item onClick={() => setProjectFilter("All")}>
               Show All
             </Dropdown.Item>
-            {projects.map((project: string, id: number) => (
+            {activeProjects.map((project: string, id: number) => (
               <Dropdown.Item onClick={() => setProjectFilter(project)} key={id}>
                 {project}
               </Dropdown.Item>
@@ -237,7 +247,9 @@ export default function Dashboard() {
           <Dropdown.Toggle variant="success">{machineFilter}</Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => setMachineFilter("All")}>All</Dropdown.Item>
+            <Dropdown.Item onClick={() => setMachineFilter("All")}>
+              All
+            </Dropdown.Item>
             <MachineDropdown setMachineFilter={setMachineFilter} />
           </Dropdown.Menu>
         </Dropdown>
@@ -318,6 +330,7 @@ export default function Dashboard() {
         name={name}
         setName={setName}
         numParts={numParts}
+        projects={projects}
       />
 
       <button

@@ -3,231 +3,243 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: "Market_Deco";
-    src: local("Market_Deco"), url("./fonts/Market_Deco.ttf") format("truetype");
-    font-weight: bold;
+  font-family: "Market_Deco";
+  src: local("Market_Deco"), url("./fonts/Market_Deco.ttf") format("truetype");
+  font-weight: bold;
 }
 
 .Popup {
-    display: inline-block !important;
-    width: 4em;
-    margin: 0.3em;
+  display: inline-block !important;
+  width: 4em;
+  margin: 0.3em;
 }
 
 .btn-group button {
-    color: white;
+  color: white;
 }
 .DropdownScroll {
-    max-height: 150px;
-    overflow-y: auto;
+  max-height: 150px;
+  overflow-y: auto;
 }
 
 .btn-group:after {
-    content: "";
-    clear: both;
-    display: table;
+  content: "";
+  clear: both;
+  display: table;
 }
 
 .btn-close {
-    opacity: 1 !important;
-    font-size: 21px;
-    border-radius: 15px;
+  opacity: 1 !important;
+  font-size: 21px;
+  border-radius: 15px;
 }
 
 .BlackTextBox {
-    background-color: rgb(24, 26, 27) !important;
-    color: rgb(209, 205, 199) !important;
-    border-color: rgb(60, 65, 68);
+  background-color: rgb(24, 26, 27) !important;
+  color: rgb(209, 205, 199) !important;
+  border-color: rgb(60, 65, 68);
 }
 
 body {
-    background-color: rgb(24, 26, 27) !important;
-    overflow: hidden;
+  background-color: rgb(24, 26, 27) !important;
+  overflow: hidden;
 }
 
 .TableGrandParent {
-    display: flex;
-    flex-direction: column;
-    height: 93vh;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 93vh;
+  overflow: hidden;
 }
 
 .TableParent {
-    flex-grow: 1;
-    overflow: auto;
-    position: relative;
-    height: auto;
+  flex-grow: 1;
+  overflow: auto;
+  position: relative;
+  height: auto;
 }
 
 .ActualTable {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .NavHead {
-    position: sticky;
-    top: 0;
-    background: #000000;
-    color: white;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
+  position: sticky;
+  top: 0;
+  background: #000000;
+  color: white;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .TorqueueLogo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar a {
-    text-decoration: none;
-    overflow: auto;
+  text-decoration: none;
+  overflow: auto;
 }
 
 .TableHeaderCell {
-    position: sticky;
-    top: 0;
-    padding-bottom: 0.75rem;
+  position: sticky;
+  top: 0;
+  padding-bottom: 0.75rem;
 }
 
 .AddPartButton {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    border-radius: 50px;
-    height: 3em;
-    width: 3em;
-    border: 2px solid #000;
-    background: #0d6efd;
-    font-size: 2em;
-    color: white;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  border-radius: 50px;
+  height: 3em;
+  width: 3em;
+  border: 2px solid #000;
+  background: #0d6efd;
+  font-size: 2em;
+  color: white;
 }
 
 .FakeLink {
-    background: none !important;
-    font-family: arial, sans-serif;
-    color: rgb(11, 11, 245);
-    text-decoration: underline;
-    cursor: pointer;
+  background: none !important;
+  font-family: arial, sans-serif;
+  color: rgb(11, 11, 245);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .TextCenterDiv {
-    color: white;
-    font-family: "Market_Deco";
-    font-size: 2em;
+  color: white;
+  font-family: "Market_Deco";
+  font-size: 2em;
 }
 
 .tooltip-class {
-    position: absolute;
-    left: 40px;
-    top: 10px;
+  position: absolute;
+  left: 40px;
+  top: 10px;
 }
 
 @media only screen and (max-width: 1000px) {
-    .SearchBar {
-        width: 9em;
-    }
+  .SearchBar {
+    width: 9em;
+  }
 }
 
 .ManagePopup {
-    filter: blur(1.5em);
+  filter: blur(1.5em);
 }
 
 .modal-dialog {
-    outline-style: solid;
-    outline-width: 0.5px;
-    outline-color: white;
+  outline-style: solid;
+  outline-width: 0.5px;
+  outline-color: white;
 }
 
 @media only screen and (min-width: 1500px) {
-    .CenterImage {
-        padding-left: 13em;
-    }
+  .CenterImage {
+    padding-left: 13em;
+  }
 }
 
 @media only screen and (max-width: 500px) {
-    .CenterImage {
-        margin-left: auto;
-        padding-left: 3em;
-    }
+  .CenterImage {
+    margin-left: auto;
+    padding-left: 3em;
+  }
 
-    .SearchBar {
-        display: none;
-    }
+  .SearchBar {
+    display: none;
+  }
 
-    .Filter {
-        font-size: 0em;
-    }
+  .Filter {
+    font-size: 0em;
+  }
 
-    .TextCenterDiv {
-        font-size: 0em;
-    }
+  .TextCenterDiv {
+    font-size: 0em;
+  }
 }
 
 .CenterImage {
-    margin-left: auto;
+  margin-left: auto;
 
-    height: 3em;
+  height: 3em;
 }
 
 .SearchBar {
-    border: 1px solid blue;
+  border: 1px solid blue;
 }
 
 .SearchBarDiv {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .ManagePopupDropdown {
-    position: absolute;
-    bottom: -0.3rem;
-    left: 6em;
-    height: 2.3em;
-    width: 14em;
+  position: absolute;
+  bottom: -0.3rem;
+  left: 6em;
+  height: 2.3em;
+  width: 14em;
 }
 
 .ManagePopupDropdownMenu {
-    position: absolute;
-    bottom: -0.3rem;
-    left: 6em;
-    width: 14em;
+  position: absolute;
+  bottom: -0.3rem;
+  left: 6em;
+  width: 14em;
 }
 
 .NoteBox {
-    position: relative;
-    display: flex;
-    left: 1em;
-    top: 2em;
-    resize: none;
-    padding-bottom: 5em;
-    margin-bottom: 2em;
+  position: relative;
+  display: flex;
+  left: 1em;
+  top: 2em;
+  resize: none;
+  padding-bottom: 5em;
+  margin-bottom: 2em;
 }
 
 .NoteLabel {
-    position: relative;
-    top: -7em;
+  position: relative;
+  top: -7em;
 }
 
 .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    filter: blur(0) !important;
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  filter: blur(0) !important;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .hide {
-    display: none;
+  display: none;
+}
+
+.ProjectDropdown {
+  position: relative;
+  left: 5.5em;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.ProjectDDItem:hover {
+    color:rgb(11, 11, 245);
+    cursor: pointer;
 }
