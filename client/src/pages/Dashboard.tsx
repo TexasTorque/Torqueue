@@ -40,8 +40,8 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-  const BACKEND_URL = "https://torqueue.texastorque.org";
-//   const BACKEND_URL = "http://localhost:5738";
+  // const BACKEND_URL = "https://torqueue.texastorque.org";
+  const BACKEND_URL = "http://localhost:5738";
 
   initializeApp(firebaseConfig);
 
@@ -110,7 +110,7 @@ export default function Dashboard() {
     } else localStorage.setItem("machineFilter", machineFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [machineFilter]);
-
+  // eslint-disable-next-line
   useEffect(() => {
     if (window.location.href.includes("#")) {
       let partID = window.location.href.split("#")[1];
@@ -129,6 +129,7 @@ export default function Dashboard() {
         }
       }
     }
+    // eslint-disable-next-line
   });
 
   const alphaSortArray = (a: string, b: string) => {
