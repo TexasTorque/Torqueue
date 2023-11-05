@@ -111,6 +111,13 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [machineFilter]);
 
+  const alphaSortArray = (a:string, b:string) => {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+
+    return a < b ? -1 : a > b ? 1 : 0;
+};
+
   const getProjects = async () => {
     partsList = [];
     let localPartsList = [] as Part[];
@@ -126,7 +133,11 @@ export default function Dashboard() {
         self.findIndex((t) => t.toLowerCase() === part.toLowerCase())
     )
     .filter((v) => v !== "");
-    
+
+
+    projects.sort((a, b) => {
+        return alphaSortArray(a, b);
+    });
 
     localPartsList = partsList
       .filter((v) => (filter === "✓" ? v.status !== 7 : true))
@@ -250,7 +261,7 @@ export default function Dashboard() {
             <Dropdown.Item onClick={() => setMachineFilter("All")}>
               All
             </Dropdown.Item>
-            <MachineDropdown setMachineFilter={setMachineFilter} />
+            <MachineDropdown setMachineFilter={setMachineFilter} setStatus={null}/>
           </Dropdown.Menu>
         </Dropdown>
         <h2 className="flex pl-3 Filter">Filter: </h2>

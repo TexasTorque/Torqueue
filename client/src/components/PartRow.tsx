@@ -25,16 +25,30 @@ export default function PartRow({
 
   const download = async (e: any) => {
     e.preventDefault();
-    if (part.files.camExt === "") {
-      alert("No GCODE Found");
-      return;
-    }
 
     let params = {
-      fileId: part.id,
-      fileExt: "cam",
-      name: `${part.name}-GCODE`,
+      fileId: "",
+      fileExt: "",
+      name: "",
     };
+
+    if (part.files.camExt !== "") {
+      params = {
+        fileId: part.id,
+        fileExt: "cam",
+        name: `${part.name}-GCODE`,
+      };
+      console.log("found cam");
+    } else if (part.files.cadExt !== "") {
+      params = {
+        fileId: part.id,
+        fileExt: "cad",
+        name: `${part.name}-STL`,
+      };
+    } else {
+      alert("No CAD or CAM Found");
+      return;
+    }
 
     await axios({
       url: `${BACKEND_URL}/downloadPart`,
@@ -45,7 +59,12 @@ export default function PartRow({
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${part.name}-GCODE.${part.files.camExt}`);
+      link.setAttribute(
+        "download",
+        `${params.name}.${
+          params.fileExt === "cam" ? part.files.camExt : part.files.cadExt
+        }`
+      );
       document.body.appendChild(link);
       link.click();
     });
@@ -75,6 +94,17 @@ export default function PartRow({
     );
   };
 
+  const getMachineName = () => {
+    if (part.machine === "") return "Any";
+
+    if (part.machine === "3D Printer")
+        if (part.asignee !== undefined && part.asignee.length > 0)
+            return part.asignee + "'s " + part.machine;
+    else return "3D Printer"
+
+    return part.machine;
+  };
+
   return (
     <tr style={{ verticalAlign: "middle" }}>
       <td align="center">{part.priority}</td>
@@ -85,7 +115,7 @@ export default function PartRow({
       </td>
       <td align="center">{part.name}</td>
       <td align="center">{part.project === "" ? "N/A" : part.project}</td>
-      <td align="center">{part.machine === "" ? "Any" : part.machine === "3D Printer" ? part.asignee + "'s " + part.machine : part.machine}</td>
+      <td align="center">{getMachineName()}</td>
       <td align="center">{part.material === "" ? "N/A" : part.material}</td>
       <td align="center">
         {part.endmill === undefined || part.endmill.length === 0

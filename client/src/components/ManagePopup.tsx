@@ -162,6 +162,8 @@ export default function ManagePopup({
 
       fileUploadExtension = parts[parts.length - 1];
 
+      console.log(uploadFileType);
+
       if (uploadFileType === "cad")
         popupPart.files.cadExt = fileUploadExtension;
       else popupPart.files.camExt = fileUploadExtension;
@@ -483,7 +485,10 @@ export default function ManagePopup({
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="ManagePopupDropdownMenu">
-              <MachineDropdown setMachineFilter={setMachine} />
+              <MachineDropdown
+                setMachineFilter={setMachine}
+                setStatus={setStatus}
+              />
             </Dropdown.Menu>
           </Dropdown>
 
