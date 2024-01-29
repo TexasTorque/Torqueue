@@ -668,7 +668,7 @@ export default function ManagePopup({
               onClick={(e) => {
                 e.preventDefault();
                 const value = priority === "" ? 0 : parseInt(priority);
-                setPriority("" + Math.max(1, value - 1));
+                setPriority(value + 1 + "");
               }}
             />
 
@@ -692,6 +692,8 @@ export default function ManagePopup({
                 e.preventDefault();
                 const value = priority === "" ? 0 : parseInt(priority);
                 setPriority(value + 1 + "");
+                setPriority("" + Math.max(1, value - 1));
+
               }}
             />
           </div>

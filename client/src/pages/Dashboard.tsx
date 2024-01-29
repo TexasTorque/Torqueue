@@ -41,7 +41,7 @@ const numberSortArray = (a: any, b: any) => {
 
 export default function Dashboard() {
   const BACKEND_URL = "https://torqueue.texastorque.org";
-//   const BACKEND_URL = "http://localhost:5738";
+  // const BACKEND_URL = "http://localhost:5738";
 
   initializeApp(firebaseConfig);
 
@@ -314,7 +314,7 @@ export default function Dashboard() {
             className="CenterImage"
           ></img>
           <h1 className="TextCenterDiv" style={{ marginRight: "auto" }}>
-            Torqueue
+            TORQUEUE
           </h1>
         </div>
 
