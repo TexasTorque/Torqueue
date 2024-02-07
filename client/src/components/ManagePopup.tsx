@@ -334,6 +334,11 @@ export default function ManagePopup({
       return;
     }
 
+    if (endmill === "" && status === 4) {
+      alert("Dhiraj wants you to provide an endmill 😡");
+      return;
+    }
+
     if (
       name !== popupPart.name ||
       machine !== popupPart.machine ||
@@ -606,7 +611,7 @@ export default function ManagePopup({
           </div>
 
           <div className={` ${status === 0 ? "" : "hidden"}`}>
-            <label className="Popup">Asignee: </label>
+            <label className="Popup">Assignee: </label>
             <input
               type="text"
               className="form-control Popup w-50 BlackTextBox relative left-4"
