@@ -65,8 +65,6 @@ export default function ManagePopup({
   const previousCreator = useRef("");
   const previousNotes = useRef("");
   const previousLink = useRef("");
-  const overRideCAD = useRef(false);
-  const overRideCAM = useRef(false);
   const previousDueDate = useRef("");
   const previousAsignee = useRef("");
 
@@ -205,24 +203,20 @@ export default function ManagePopup({
   const handleOpenFileSelector = (selectedFileType: string) => {
     if (
       selectedFileType === "cad" &&
-      popupPart.files.cadExt !== "" &&
-      !overRideCAD.current
+      popupPart.files.cadExt !== "" 
     ) {
       alert(
-        "This part already has A CAD file. Try to upload again to override the current one."
+        "This part already has A CAD file. Please delete this part and make a new one if you want to change the CAD file."
       );
-      overRideCAD.current = true;
       return;
     }
     if (
       selectedFileType === "cam" &&
-      popupPart.files.camExt !== "" &&
-      !overRideCAM.current
+      popupPart.files.camExt !== ""
     ) {
       alert(
-        "This part already has A CAM file. Try to upload again to override the current one."
+        "This part already has A CAM file. Please delete this part and make a new one if you want to change the CAM file."
       );
-      overRideCAM.current = true;
       return;
     }
     openFileSelector.current["click"]();
