@@ -151,7 +151,7 @@ export default function Dashboard() {
       .filter(
         (part, index, self) =>
           index ===
-          self.findIndex((t) => t.toLowerCase() === part.toLowerCase())
+          self.findIndex((t) => t.toLowerCase().trim() === part.toLowerCase().trim())
       )
       .filter((v) => v !== "");
 

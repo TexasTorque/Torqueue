@@ -54,6 +54,9 @@ export default function ManagePopup({
 
   const [loading, setLoading] = useState(false);
 
+  const [overRideCAD, setOverRideCAD] = useState(false);
+  const [overRideCAM, setOverRideCAM] = useState(false);
+
   const previousName = useRef("");
   const previousMachine = useRef("");
   const previousEndmill = useRef("");
@@ -65,8 +68,6 @@ export default function ManagePopup({
   const previousCreator = useRef("");
   const previousNotes = useRef("");
   const previousLink = useRef("");
-  const overRideCAD = useRef(false);
-  const overRideCAM = useRef(false);
   const previousDueDate = useRef("");
   const previousAsignee = useRef("");
 
@@ -138,18 +139,23 @@ export default function ManagePopup({
     setDueDate(popupPart.dueDate);
     setAsignee(popupPart.asignee);
 
+    setOverRideCAD(false);
+    setOverRideCAM(false);
+
     if (addPart.current) {
       setPopupName("Add a Part");
       popupPart.id = uuid4();
       addPart.current = false;
       popupPart.createDate = getDate();
       popupPart.partNumber = numParts + 1;
+      popupPart.files = { camExt: "", cadExt: "", camSize: "" };
+
       setName("");
     } else setPopupName(`Edit ${popupPart.name}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [popupPart, showPopup]);
 
-  console.log(popupPart)
+  console.log(popupPart.files)
 
   const handleFileUpload = async (e: { target: { files: any } }) => {
     setLoading(true);
@@ -203,26 +209,31 @@ export default function ManagePopup({
   };
 
   const handleOpenFileSelector = (selectedFileType: string) => {
+    console.log(overRideCAD)
+    console.log(popupPart.files.cadExt);
+    console.log(popupPart.files.camExt);
+    console.log(popupPart.files.cadExt.length !== 0);
+    console.log(popupPart.files.camExt.length !== 0);
     if (
       selectedFileType === "cad" &&
-      popupPart.files.cadExt !== "" &&
-      !overRideCAD.current
+      popupPart.files.cadExt.length !== 0 &&
+      !overRideCAD
     ) {
       alert(
         "This part already has A CAD file. Try to upload again to override the current one."
       );
-      overRideCAD.current = true;
+      setOverRideCAD(true);
       return;
     }
     if (
       selectedFileType === "cam" &&
-      popupPart.files.camExt !== "" &&
-      !overRideCAM.current
+      popupPart.files.camExt.length !== 0 &&
+      !overRideCAM
     ) {
       alert(
         "This part already has A CAM file. Try to upload again to override the current one."
       );
-      overRideCAM.current = true;
+      setOverRideCAM(true);
       return;
     }
     openFileSelector.current["click"]();
@@ -254,8 +265,7 @@ export default function ManagePopup({
       link.href = url;
       link.setAttribute(
         "download",
-        `${popupPart.name}-${fileType}.${
-          fileType === "cad" ? popupPart.files.cadExt : popupPart.files.camExt
+        `${popupPart.name}-${fileType}.${fileType === "cad" ? popupPart.files.cadExt : popupPart.files.camExt
         }`
       );
       document.body.appendChild(link);
