@@ -19,5 +19,6 @@
         "strictNullChecks": false,
         "strictPropertyInitialization": false
     },
-    "include": ["src"]
+    "include": ["src"],
+    "exclude": ["functions"]
 }
