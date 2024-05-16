@@ -17,6 +17,8 @@
         "axios": "^1.2.0",
         "bootstrap": "^5.2.2",
         "firebase": "^9.14.0",
+        "firebase-auth-lite": "^0.8.9",
+        "firebase-firestore-lite": "^1.0.3",
         "react": "^18.2.0",
         "react-app-polyfill": "^3.0.0",
         "react-bootstrap": "^2.6.0",
