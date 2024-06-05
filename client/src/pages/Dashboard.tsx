@@ -40,7 +40,8 @@ const numberSortArray = (a: any, b: any) => {
 };
 
 export default function Dashboard() {
-  const BACKEND_URL = "https://torqueue.texastorque.org";
+  // const BACKEND_URL = "https://torqueue.texastorque.org";
+  const BACKEND_URL = "https://torqueue-production.up.railway.app"
   // const BACKEND_URL = "http://localhost:5738";
 
   initializeApp(firebaseConfig);
