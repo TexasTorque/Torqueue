@@ -37,6 +37,5 @@ app.post("/uploadPart", upload.single("partUpload"), uploadFile);
 app.get("/downloadPart", getFileDownloadURL);
 app.post("/deletePart", deleteFile);
 
-// app.listen((process.env.PORT || 5738, '0.0.0.0');
-app.listen(5738, '0.0.0.0');
+app.listen(Number(port), '0.0.0.0', () => console.log(`Server started on ${port}!`));
 
