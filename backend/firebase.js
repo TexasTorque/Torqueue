@@ -30,6 +30,7 @@ const db = getDatabase();
 const dbRef = dref(getDatabase());
 
 export const getAllPartsFB = async () => {
+    console.log("getting parts")
     let parts = [""];
     let error = false,
         errorMessage = "";
