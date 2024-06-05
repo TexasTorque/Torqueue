@@ -13,6 +13,7 @@ interface MulterRequest extends Request {
 }
 
 export const getAllParts = asyncHandler(async (req, res) => {
+    console.log("Get Requested Recieved");
     res.send(await getAllPartsFB());
 });
 

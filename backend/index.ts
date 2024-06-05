@@ -37,5 +37,5 @@ app.post("/uploadPart", upload.single("partUpload"), uploadFile);
 app.get("/downloadPart", getFileDownloadURL);
 app.post("/deletePart", deleteFile);
 
-app.listen(Number(port), '0.0.0.0', () => console.log(`Server started on ${port}!`));
+app.listen(Number(port), "0.0.0.0", () => console.log(`Server started on ${port}!`));
 
