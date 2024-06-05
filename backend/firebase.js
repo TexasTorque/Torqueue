@@ -7,7 +7,7 @@ import {
     deleteObject,
 } from "firebase/storage";
 import { getDatabase, ref as dref, get, set, child } from "firebase/database";
-import { Part } from "./Interfaces";
+// import { Part } from "./Interfaces";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -49,7 +49,7 @@ export const getAllPartsFB = async () => {
     else return parts;
 };
 
-export const setPartFB = async (part: Part) => {
+export const setPartFB = async (part) => {
     let errorMessage = "";
     let data = part.dev.delete ? null : part;
 
@@ -63,11 +63,11 @@ export const setPartFB = async (part: Part) => {
 };
 
 export const uploadPartFirebase = async (
-    partFile: any,
-    fileId: string,
-    fileType: string
+    partFile,
+    fileId,
+    fileType
 ) => {
-    let targetRef: any;
+    let targetRef;
     let errorMessage = "";
 
     if (fileType === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
@@ -79,8 +79,8 @@ export const uploadPartFirebase = async (
     return "success";
 };
 
-export const deletePartFB = async (fileId: string, fileType: string) => {
-    let targetRef: any;
+export const deletePartFB = async (fileId, fileType) => {
+    let targetRef;
     let errorMessage = "";
 
     if (fileType === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
@@ -90,8 +90,8 @@ export const deletePartFB = async (fileId: string, fileType: string) => {
     return "success";
 };
 
-export const getPartDownloadURLFirebase = async (fileId: any, fileExt: any) => {
-    let targetRef: any;
+export const getPartDownloadURLFirebase = async (fileId, fileExt) => {
+    let targetRef;
     if (fileExt === "cam") targetRef = sref(storage, `cam_files/${fileId}`);
     else targetRef = sref(storage, `parts_files/${fileId}`);
     return await getBytes(targetRef);

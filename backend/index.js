@@ -5,7 +5,7 @@ import {
   uploadFile,
   getFileDownloadURL,
   deleteFile,
-} from "./apiController";
+} from "./apiController.js";
 import multer from "multer";
 import cors from "cors";
 

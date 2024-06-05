@@ -5,12 +5,12 @@ import {
     uploadPartFirebase,
     getPartDownloadURLFirebase,
     deletePartFB,
-} from "./firebase";
-import { Request, Response } from "express";
+} from "./firebase.js";
+// import { Request, Response } from "express";
 
-interface MulterRequest extends Request {
-    file: any;
-}
+// interface MulterRequest extends Request {
+//     file: any;
+// }
 
 export const getAllParts = asyncHandler(async (req, res) => {
     console.log("Get Requested Recieved");
@@ -21,8 +21,8 @@ export const editPart = asyncHandler(async (req, res) => {
     res.send(await setPartFB(req.body.hotPart));
 });
 
-export const uploadFile = asyncHandler(async (req: Request, res: Response) => {
-    const file = (req as MulterRequest).file;
+export const uploadFile = asyncHandler(async (req, res) => {
+    const file = (req).file;
 
     let partFile = file || null;
 
@@ -32,7 +32,7 @@ export const uploadFile = asyncHandler(async (req: Request, res: Response) => {
     res.send(await uploadPartFirebase(partFile, fileId, fileType));
 });
 
-export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
+export const deleteFile = asyncHandler(async (req, res) => {
     let cadDelete = "success",
         camDelete = "success";
 
