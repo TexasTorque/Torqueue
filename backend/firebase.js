@@ -45,6 +45,7 @@ export const getAllPartsFB = async () => {
             errorMessage = error;
         });
 
+    console.log(error ? errorMessage : parts);
     if (error) return errorMessage;
     else return parts;
 };
